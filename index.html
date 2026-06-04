@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="site-title">Laptop Tech Hub - BIOS, Schematics & Software Resources</title>
+  <meta name="description" id="site-description" content="Premium resources for laptop repair technicians. Download BIOS bin files, boardview files, schematics, and specialized technician software. Shop repair gear online.">
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Custom style overrides for single post detail view */
+    #view-post-detail .detail-carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #view-post-detail .detail-carousel-track img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .detail-split-layout {
+        grid-template-columns: 1fr !important;
+      }
+      #view-post-detail .detail-carousel-track img {
+        height: 280px;
+      }
+      #detail-media-container {
+        height: 280px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- --- HEADER & NAV --- -->
+  <header id="main-header">
+    <div class="container header-container">
+      <a href="#home" class="logo" id="logo-btn">
+        <i class="fa-solid fa-microchip" id="header-logo-icon"></i>
+        <span id="header-logo-text">TechHub<span style="color:hsl(var(--primary));">.</span></span>
+      </a>
+
+      <!-- Navigation links (SPA) -->
+      <nav id="navbar">
+        <span class="nav-link active" data-target="home" id="nav-item-home">Home</span>
+        <span class="nav-link" data-target="tech-news" id="nav-item-news">Tech News</span>
+        <span class="nav-link" data-target="repair-articles" id="nav-item-repair">Repair Articles</span>
+        <span class="nav-link" data-target="store" id="nav-item-store">Store</span>
+        <span class="nav-link" data-target="admin" id="nav-item-admin">Admin Portal</span>
+        <span class="nav-link" data-target="about-us" id="nav-item-about">About Us</span>
+        <span class="nav-link" data-target="contact-us" id="nav-item-contact">Contact Us</span>
+        <span class="nav-link" data-target="privacy-policy" id="nav-item-privacy">Privacy Policy</span>
+        <span class="nav-link" data-target="terms-conditions" id="nav-item-terms">Terms & Conditions</span>
+        <span class="nav-link" data-target="disclaimer" id="nav-item-disclaimer">Disclaimer</span>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn-admin" id="admin-trigger-btn">
+          <i class="fa-solid fa-lock"></i>
+          <span>Admin Portal</span>
+        </button>
+
+        <div class="hamburger" id="hamburger-btn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Firebase Status Banner -->
+  <div id="firebase-warning-banner" style="display: none; background: linear-gradient(90deg, #ff8c00, #e06c00); color: #fff; text-align: center; padding: 6px 12px; font-size: 13px; font-weight: 700; border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 999; position: relative; margin-top: 76px;">
+    <i class="fa-solid fa-circle-exclamation"></i> Running in Offline Demo Mode (Firebase and Cloudinary not configured). Changes are saved locally on this browser.
+  </div>
+
+  <!-- --- MAIN SPA CONTENT --- -->
+  <main>
+    <div class="container">
+
+      <!-- ================= HOME VIEW ================= -->
+      <section id="view-home" class="view-section active">
+        <div class="hero">
+          <h1 class="glow-text" id="home-hero-title">Ultimate <span>Technician Hub</span> for Laptop Repair</h1>
+          <p id="home-hero-desc">Verified BIOS dumps, boardviews, schematics, specialized flashing softwares, and high-quality diagnostics tools for professional laptop technicians.</p>
+          <div class="search-container">
+            <input type="text" class="search-bar" id="home-search-bar" placeholder="Search news, repair files, tools, or shop products...">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+        </div>
+
+        <!-- Quick Statistics Counters -->
+        <div class="stats-cluster">
+          <div class="stat-card" style="cursor: pointer;" data-target="tech-news" id="home-stat-news-card">
+            <i class="fa-solid fa-newspaper"></i>
+            <div class="stat-val" id="stat-count-news">0</div>
+            <div class="stat-lbl" id="lbl-news-count">Tech News</div>
+          </div>
+          <div class="stat-card" style="cursor: pointer;" data-target="repair-articles" id="home-stat-repair-card">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <div class="stat-val" id="stat-count-repair">0</div>
+            <div class="stat-lbl" id="lbl-repair-count">Repair Articles</div>
+          </div>
+          <div class="stat-card" style="cursor: pointer;" data-target="store" id="home-stat-store-card">
+            <i class="fa-solid fa-store"></i>
+            <div class="stat-val" id="stat-count-store">0</div>
+            <div class="stat-lbl" id="lbl-store-count">Store Items</div>
+          </div>
+        </div>
+
+        <!-- Recent Posts Section -->
+        <div class="section-header">
+          <h2 class="section-title">Recently Added Resources</h2>
+        </div>
+        <div class="grid-layout" id="recent-posts-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </section>
+
+      <!-- ================= TECH NEWS VIEW ================= -->
+      <section id="view-tech-news" class="view-section">
+        <div class="section-header">
+          <h2 class="section-title" id="feed-title-news">Latest Tech & Hardware News</h2>
+        </div>
+        <div class="grid-layout" id="tech-news-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= REPAIR ARTICLES VIEW ================= -->
+      <section id="view-repair-articles" class="view-section">
+        <div class="section-header">
+          <h2 class="section-title" id="feed-title-repair">Repair Guides & Download Center</h2>
+        </div>
+        <div class="grid-layout" id="repair-articles-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= STORE VIEW ================= -->
+      <section id="view-store" class="view-section">
+        <div class="section-header">
+          <h2 class="section-title" id="feed-title-store">Professional Technician Online Store</h2>
+        </div>
+        <div class="grid-layout" id="store-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ================= ABOUT US VIEW ================= -->
+      <section id="view-about-us" class="view-section">
+        <div class="content-rich-box" id="about-us-container">
+          <h2 class="glow-text">About Laptop Tech Hub</h2>
+          <p>Welcome to Laptop Tech Hub, the premium online repository and resource directory tailored specifically for motherboard repair engineers, electronics enthusiasts, and IT hardware technicians.</p>
+        </div>
+      </section>
+
+      <!-- ================= CONTACT US VIEW ================= -->
+      <section id="view-contact-us" class="view-section">
+        <div class="section-header">
+          <h2 class="section-title">Get In Touch With Us</h2>
+        </div>
+        <div class="contact-grid">
+          <!-- Form -->
+          <div class="contact-box">
+            <h3>Send us a Message</h3>
+            <form id="contact-form" name="contact" method="POST" data-netlify="true">
+              <div class="form-group">
+                <label for="contact-name">Full Name</label>
+                <input type="text" id="contact-name" class="form-control" placeholder="e.g. Dasith Silva" required>
+              </div>
+              <div class="form-group">
+                <label for="contact-email">Email Address</label>
+                <input type="email" id="contact-email" class="form-control" placeholder="e.g. yourname@domain.com" required>
+              </div>
+              <div class="form-group">
+                <label for="contact-subject">Subject</label>
+                <input type="text" id="contact-subject" class="form-control" placeholder="e.g. Request BIOS File" required>
+              </div>
+              <div class="form-group">
+                <label for="contact-message">Message Details</label>
+                <textarea id="contact-message" class="form-control" placeholder="Write details here..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fa-solid fa-paper-plane"></i> Submit Inquiry
+              </button>
+            </form>
+          </div>
+
+          <!-- Info cards -->
+          <div class="contact-info-card">
+            <h3>Contact Information</h3>
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div class="info-text">
+                <h4>Support Email</h4>
+                <p><a id="contact-email-link" href="mailto:itsolutionslab23@gmail.com" style="color: hsl(var(--primary)); text-decoration: underline;">itsolutionslab23@gmail.com</a></p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon"><i class="fa-brands fa-whatsapp"></i></div>
+              <div class="info-text">
+                <h4>WhatsApp Support Line</h4>
+                <p><a id="contact-whatsapp-link" href="https://wa.me/94742544138" target="_blank" style="color: hsl(var(--accent)); font-weight: 700;"><span id="contact-whatsapp-num">+94 74 254 4138</span></a></p>
+                <p>Available 24/7 for technician queries</p>
+              </div>
+            </div>
+            
+            <!-- YouTube Channel Hype Card -->
+            <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, rgba(255, 0, 0, 0.08), rgba(139, 92, 246, 0.08)); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: var(--radius-sm); position: relative;">
+              <div style="position: absolute; top: -10px; right: 15px; background: #ff0000; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: var(--radius-full); text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--shadow-sm);">Official YouTube</div>
+              <h4 style="font-size: 17px; margin-bottom: 8px; color: #ff3333; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-brands fa-youtube" style="font-size: 20px;"></i> <span id="contact-youtube-name">IT Solutions Pro</span>
+              </h4>
+              <p id="contact-youtube-desc" style="font-size: 13px; color: hsl(var(--text-secondary)); line-height: 1.5; margin-bottom: 12px;">
+                Sri Lanka's premium tech education brand! Learn level-3 motherboard repairing and troubleshooting.
+              </p>
+              <a id="contact-youtube-link" href="https://www.youtube.com/@itsolutionspro" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; width: 100%; border-color: rgba(255, 0, 0, 0.4); color: #ff3333; background: rgba(255, 0, 0, 0.04); display: flex; justify-content: center; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-play"></i> Watch & Subscribe
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STATUTORY VIEWS ================= -->
+      <section id="view-privacy-policy" class="view-section">
+        <div class="content-rich-box" id="privacy-policy-container">
+          <h2 class="glow-text">Privacy Policy</h2>
+          <p>Privacy Policy terms go here...</p>
+        </div>
+      </section>
+
+      <section id="view-terms-conditions" class="view-section">
+        <div class="content-rich-box" id="terms-conditions-container">
+          <h2 class="glow-text">Terms & Conditions</h2>
+          <p>Terms and conditions go here...</p>
+        </div>
+      </section>
+
+      <section id="view-disclaimer" class="view-section">
+        <div class="content-rich-box" id="disclaimer-container">
+          <h2 class="glow-text">Legal Disclaimer</h2>
+          <p>Disclaimer statements go here...</p>
+        </div>
+      </section>
+
+      <!-- ================= DETAILED POST VIEW ================= -->
+      <section id="view-post-detail" class="view-section">
+        <button class="btn btn-secondary" id="detail-back-btn" style="margin-bottom: 24px; padding: 10px 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-arrow-left-long"></i> Back to Resources
+        </button>
+        
+        <div class="content-rich-box" style="padding: 30px; border-radius: var(--radius-md); border: 1px solid hsl(var(--border-color));">
+          <!-- Detail Header -->
+          <div style="border-bottom: 1px solid hsl(var(--border-color)); padding-bottom: 20px; margin-bottom: 24px;">
+            <div id="detail-category-badge" class="card-badge" style="position: static; display: inline-block; margin-bottom: 12px; font-size: 11px;">Category</div>
+            <h1 id="detail-title" class="glow-text" style="font-size: 34px; line-height: 1.2; margin-bottom: 12px; font-weight: 800;">Post Title</h1>
+            <div style="display: flex; align-items: center; gap: 20px; color: hsl(var(--text-muted)); font-size: 13px;">
+              <span><i class="fa-solid fa-calendar-days" style="color: hsl(var(--primary));"></i> Published: <span id="detail-date">-</span></span>
+              <span><i class="fa-solid fa-eye" style="color: hsl(var(--primary));"></i> Views: <span id="detail-views">0</span></span>
+            </div>
+          </div>
+
+          <!-- Media Container -->
+          <div id="detail-media-container" style="height: 480px; width: 100%; border-radius: var(--radius-md); overflow: hidden; background: hsl(var(--bg-dark)); border: 1px solid hsl(var(--border-color)); display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 30px;">
+            <!-- Carousel content injected dynamically -->
+          </div>
+
+          <!-- Split Content Info -->
+          <div class="detail-split-layout" style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 30px; align-items: start;">
+            <!-- Left Info (Description) -->
+            <div>
+              <h3 style="color: hsl(var(--primary)); margin-bottom: 15px; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-file-waveform"></i> Article Details & Tech Notes
+              </h3>
+              <div id="detail-description" style="color: hsl(var(--text-secondary)); font-size: 15px; line-height: 1.8; white-space: pre-wrap;">
+                Full description goes here...
+              </div>
+            </div>
+
+            <!-- Right Info (Specs & CTA) -->
+            <div style="background: hsl(var(--bg-card)); padding: 24px; border-radius: var(--radius-md); border: 1px solid hsl(var(--border-color));">
+              <h3 id="detail-side-header" style="font-size: 20px; margin-bottom: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; color: hsl(var(--accent));">
+                Specs & Action
+              </h3>
+              
+              <!-- Specs Grid -->
+              <div id="detail-specs-container" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid hsl(var(--border-color)); padding-bottom: 20px;">
+                <!-- Specs key/value maps go here -->
+              </div>
+
+              <!-- Button actions -->
+              <div id="detail-actions-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- buttons injected dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ADMIN PORTAL VIEW ================= -->
+      <section id="view-admin" class="view-section">
+        <div class="admin-hub">
+          <div class="admin-header-row">
+            <div>
+              <h2 style="font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-screwdriver-wrench" style="color: hsl(var(--primary));"></i>
+                Admin Dashboard
+              </h2>
+              <p style="color: hsl(var(--text-secondary)); font-size: 14px;">Manage resource assets, product listings, support messages, and website configurations.</p>
+            </div>
+            
+            <div class="admin-nav-tabs">
+              <span class="admin-tab-btn active" id="tab-manage-posts-btn">Manage Posts</span>
+              <span class="admin-tab-btn" id="tab-messages-btn">Inbox (<span id="inbox-badge-count">0</span>)</span>
+              <span class="admin-tab-btn" id="tab-settings-btn"><i class="fa-solid fa-sliders"></i> Site Settings</span>
+            </div>
+          </div>
+
+          <!-- Quick statistics overview (nested in admin) -->
+          <div class="stats-cluster" style="margin: 0; grid-template-columns: repeat(4, 1fr);">
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-val" style="font-size: 24px;" id="admin-stat-total">0</div>
+              <div class="stat-lbl" style="font-size: 11px;">Total Posts</div>
+            </div>
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-val" style="font-size: 24px;" id="admin-stat-news">0</div>
+              <div class="stat-lbl" style="font-size: 11px;" id="admin-stat-lbl-news">Tech News</div>
+            </div>
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-val" style="font-size: 24px;" id="admin-stat-repair">0</div>
+              <div class="stat-lbl" style="font-size: 11px;" id="admin-stat-lbl-repair">Repair Articles</div>
+            </div>
+            <div class="stat-card" style="padding: 16px;">
+              <div class="stat-val" style="font-size: 24px;" id="admin-stat-store">0</div>
+              <div class="stat-lbl" style="font-size: 11px;" id="admin-stat-lbl-store">Store Items</div>
+            </div>
+          </div>
+
+          <!-- Tab 1 Content: Manage Posts -->
+          <div class="admin-dashboard-layout" id="admin-tab-manage-posts">
+            <!-- Left Side: Add / Edit Form -->
+            <div class="admin-form-panel">
+              <h3 id="form-action-title">
+                <i class="fa-solid fa-circle-plus"></i> Add New Resource
+              </h3>
+              <form id="admin-post-form">
+                <!-- ID Holder for edits -->
+                <input type="hidden" id="form-post-id">
+
+                <div class="form-group">
+                  <label for="form-category">Category</label>
+                  <select id="form-category" class="form-control" style="background-color: hsl(var(--bg-dark));" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="tech-news" id="opt-tech-news">Tech News</option>
+                    <option value="repair-articles" id="opt-repair-articles">Repair Articles</option>
+                    <option value="store" id="opt-store">Store</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="form-title">Post / Product Title</label>
+                  <input type="text" id="form-title" class="form-control" placeholder="e.g. Asus Vivobook X510 Working Dump" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="form-description">Description / Technical Notes / More Details</label>
+                  <textarea id="form-description" class="form-control" style="min-height: 80px;" placeholder="Add chip model, testing notes, and setup tips..." required></textarea>
+                </div>
+
+                <!-- Price input (only for Store) -->
+                <div class="form-group price-field-group" id="form-price-group" style="display: none;">
+                  <label for="form-price">Price Tag</label>
+                  <input type="text" id="form-price" class="form-control" placeholder="e.g. $15.00 or LKR 4,500">
+                </div>
+
+                <!-- Dynamic technical specifications -->
+                <div class="tech-metadata-fields" id="meta-fields-container">
+                  <!-- Injected via JavaScript based on selected category -->
+                </div>
+
+                <!-- Multi-Image Gallery Uploader -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                  <label>Resource Images (Up to 4)</label>
+                  
+                  <!-- Slot Selector Grid -->
+                  <div class="image-slots-container">
+                    <div class="image-slot active" data-slot="0" title="Select Slot 1 (Cover)">
+                      <div class="slot-badge">Cover</div>
+                      <img class="slot-thumb" id="slot-thumb-0" src="" style="display: none;">
+                      <i class="fa-solid fa-plus slot-icon" id="slot-icon-0"></i>
+                      <div class="slot-delete" id="slot-delete-0" style="display: none;" title="Remove Cover Image"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                    <div class="image-slot" data-slot="1" title="Select Slot 2">
+                      <div class="slot-badge">Img 2</div>
+                      <img class="slot-thumb" id="slot-thumb-1" src="" style="display: none;">
+                      <i class="fa-solid fa-plus slot-icon" id="slot-icon-1"></i>
+                      <div class="slot-delete" id="slot-delete-1" style="display: none;" title="Remove Image 2"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                    <div class="image-slot" data-slot="2" title="Select Slot 3">
+                      <div class="slot-badge">Img 3</div>
+                      <img class="slot-thumb" id="slot-thumb-2" src="" style="display: none;">
+                      <i class="fa-solid fa-plus slot-icon" id="slot-icon-2"></i>
+                      <div class="slot-delete" id="slot-delete-2" style="display: none;" title="Remove Image 3"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                    <div class="image-slot" data-slot="3" title="Select Slot 4">
+                      <div class="slot-badge">Img 4</div>
+                      <img class="slot-thumb" id="slot-thumb-3" src="" style="display: none;">
+                      <i class="fa-solid fa-plus slot-icon" id="slot-icon-3"></i>
+                      <div class="slot-delete" id="slot-delete-3" style="display: none;" title="Remove Image 4"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                  </div>
+
+                  <!-- Upload Control Zone -->
+                  <div class="upload-zone" id="image-upload-zone">
+                    <i class="fa-solid fa-cloud-arrow-up" id="upload-icon-element"></i>
+                    <p id="upload-zone-text">Upload image to Selected Slot</p>
+                    <span id="upload-limit-text">Supports JPG, PNG, WebP (Max 2MB)</span>
+                    <input type="file" id="form-image-file" accept="image/*" style="display: none;">
+                  </div>
+                  
+                  <div style="margin: 10px 0; text-align: center; font-size: 11px; color: hsl(var(--text-muted));">- OR -</div>
+                  <input type="text" id="form-image-url" class="form-control" placeholder="Paste external URL for Selected Slot here...">
+                  
+                  <!-- hidden serialize field -->
+                  <input type="hidden" id="form-images-json">
+                </div>
+
+                <div class="form-group">
+                  <label for="form-link">External / Source Link</label>
+                  <input type="text" id="form-link" class="form-control" placeholder="e.g. https://www.motherboard.net" value="#">
+                </div>
+
+                <div class="form-group">
+                  <label for="form-download">Download Link (Optional)</label>
+                  <input type="text" id="form-download" class="form-control" placeholder="e.g. https://google-drive.com/bios.bin" value="#">
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                  <button type="button" class="btn btn-secondary" id="form-cancel-btn" style="flex: 1; display: none;">Cancel</button>
+                  <button type="submit" class="btn btn-primary" id="form-submit-btn" style="flex: 1.5;">Add Resource</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right Side: Item Table Lists -->
+            <div class="admin-items-panel">
+              <div class="admin-panel-header">
+                <h3 style="font-size: 18px; font-weight: 700;">Database Inventory</h3>
+                <div class="admin-search">
+                  <div class="admin-search-container">
+                    <input type="text" id="admin-items-search" placeholder="Search database...">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Resource Details</th>
+                      <th>Category</th>
+                      <th>Extra Details</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-posts-table-body">
+                    <!-- Injected dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2 Content: Messages Inbox -->
+          <div class="admin-items-panel" id="admin-tab-messages" style="display: none;">
+            <div class="admin-panel-header">
+              <h3 style="font-size: 18px; font-weight: 700;">Contact Inquiries Inbox</h3>
+            </div>
+            
+            <div class="messages-list" id="admin-messages-container">
+              <!-- Messages injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Tab 3 Content: Site Settings -->
+          <div class="admin-items-panel" id="admin-tab-settings" style="display: none; max-width: 100%; width: 100%;">
+            <div class="admin-panel-header">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">
+                <i class="fa-solid fa-sliders"></i> Dynamic Site Configurations
+              </h3>
+            </div>
+            <form id="admin-settings-form" style="max-width: 900px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <!-- Branding Settings -->
+                <div style="background: hsl(var(--bg-dark)); padding: 20px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border));">
+                  <h4 style="margin-bottom: 15px; color: hsl(var(--primary));"><i class="fa-solid fa-tags"></i> Branding & Logos</h4>
+                  <div class="form-group">
+                    <label>Website Name / Title</label>
+                    <input type="text" id="settings-site-name" class="form-control" placeholder="e.g. Laptop Tech Hub" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Logo Brand Text</label>
+                    <input type="text" id="settings-logo-text" class="form-control" placeholder="e.g. TechHub" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label>Logo Icon (FontAwesome Class)</label>
+                    <input type="text" id="settings-logo-icon" class="form-control" placeholder="e.g. fa-solid fa-microchip" required>
+                  </div>
+                </div>
+
+                <!-- Category Name Settings -->
+                <div style="background: hsl(var(--bg-dark)); padding: 20px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border));">
+                  <h4 style="margin-bottom: 15px; color: hsl(var(--accent));"><i class="fa-solid fa-folder-tree"></i> Custom Category Labels</h4>
+                  <div class="form-group">
+                    <label>Tech News Label</label>
+                    <input type="text" id="settings-label-news" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Repair Articles Label</label>
+                    <input type="text" id="settings-label-repair" class="form-control" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label>Store Label</label>
+                    <input type="text" id="settings-label-store" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Menu Bar Visibility Configuration -->
+              <div style="background: hsl(var(--bg-dark)); padding: 20px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: hsl(var(--secondary));"><i class="fa-solid fa-bars"></i> Menu Bar Link Customization</h4>
+                <p style="color: hsl(var(--text-muted)); font-size: 12px; margin-bottom: 15px;">Check the pages you want to show in the header navigation menu bar:</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-home"> Home
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-news"> Tech News
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-repair"> Repair Articles
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-store"> Store
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-admin"> Admin Portal
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-about"> About Us
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-contact"> Contact Us
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-privacy"> Privacy Policy
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-terms"> Terms & Conditions
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" id="settings-menu-disclaimer"> Disclaimer
+                  </label>
+                </div>
+              </div>
+
+              <!-- Contact & Social Details -->
+              <div style="background: hsl(var(--bg-dark)); padding: 20px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: hsl(var(--warning));"><i class="fa-solid fa-address-book"></i> Support & Social Media Links</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                  <div class="form-group">
+                    <label>Support Email Address</label>
+                    <input type="email" id="settings-email" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label>WhatsApp Number (with country code)</label>
+                    <input type="text" id="settings-phone" class="form-control" placeholder="e.g. +94742544138" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label>YouTube Channel Link</label>
+                    <input type="text" id="settings-youtube-url" class="form-control" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label>YouTube Channel Name</label>
+                    <input type="text" id="settings-youtube-name" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Contents (Statutory Pages) -->
+              <div style="background: hsl(var(--bg-dark)); padding: 20px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border)); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: hsl(var(--text-primary));"><i class="fa-solid fa-file-contract"></i> Statutory & Static Page Content (HTML Supported)</h4>
+                
+                <div class="form-group">
+                  <label>About Us Page Content</label>
+                  <textarea id="settings-about-us" class="form-control" style="min-height: 120px;" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Privacy Policy Content</label>
+                  <textarea id="settings-privacy-policy" class="form-control" style="min-height: 120px;" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Terms & Conditions Content</label>
+                  <textarea id="settings-terms-conditions" class="form-control" style="min-height: 120px;" required></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label>Legal Disclaimer Content</label>
+                  <textarea id="settings-disclaimer" class="form-control" style="min-height: 120px;" required></textarea>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Dynamic Site Configurations
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- --- FOOTER --- -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="#home" class="logo" id="footer-logo-btn" style="margin-bottom: 14px;">
+            <i class="fa-solid fa-microchip" id="footer-logo-icon"></i>
+            <span id="footer-logo-text">TechHub<span style="color:hsl(var(--primary));">.</span></span>
+          </a>
+          <p id="footer-branding-desc">The premium portal for verified bios files, diagnostic firmware dumps, schematics, boardviews, and technician programs.</p>
+        </div>
+        <div class="footer-col" id="footer-col-quick-links">
+          <h3>Quick Resource Tabs</h3>
+          <div class="footer-links">
+            <span data-target="tech-news" id="footer-link-tech-news">Tech News</span>
+            <span data-target="repair-articles" id="footer-link-repair-articles">Repair Articles</span>
+            <span data-target="store" id="footer-link-store">Store</span>
+          </div>
+        </div>
+        <div class="footer-col" id="footer-col-about-links">
+          <h3>About & Support</h3>
+          <div class="footer-links">
+            <span data-target="about-us" id="footer-item-about">About Our Hub</span>
+            <span data-target="contact-us" id="footer-item-contact">Contact/Inquiries</span>
+            <span data-target="privacy-policy" id="footer-item-privacy">Privacy Policy</span>
+            <span data-target="terms-conditions" id="footer-item-terms">Terms & Conditions</span>
+            <span data-target="disclaimer" id="footer-item-disclaimer">Legal Disclaimer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div id="footer-copy-text">&copy; 2026 Laptop Tech Hub. All intellectual rights reserved. Built for professional repair technicians.</div>
+        <div class="footer-bottom-links">
+          <span style="cursor: pointer;" data-target="privacy-policy" id="footer-bottom-privacy">Privacy</span>
+          <span style="cursor: pointer;" data-target="terms-conditions" id="footer-bottom-terms">Terms</span>
+          <span style="cursor: pointer;" data-target="disclaimer" id="footer-bottom-disclaimer">Disclaimer</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- --- MODAL DIALOGS --- -->
+  
+  <!-- Passcode Overlay Modal -->
+  <div class="modal-overlay" id="admin-auth-modal">
+    <div class="modal-box">
+      <i class="fa-solid fa-xmark modal-close" id="auth-modal-close"></i>
+      <i class="fa-solid fa-shield-halved modal-icon"></i>
+      <h3>Admin Access Portal</h3>
+      <p>Enter the security credentials to unlock the administrative content dashboard.</p>
+      
+      <div class="form-group" style="text-align: left;">
+        <label for="auth-passcode">Security Passcode</label>
+        <input type="password" id="auth-passcode" class="form-control" style="text-align: center; letter-spacing: 4px; font-weight: 700; font-size: 18px;" placeholder="••••" required>
+        <span style="display: block; font-size: 11px; color: hsl(var(--text-muted)); text-align: center; margin-top: 8px;">Hint: Default passcode is 'admin'</span>
+      </div>
+
+      <button class="btn btn-primary" id="auth-submit-btn" style="width: 100%;">
+        <i class="fa-solid fa-key"></i> Unlock Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-notification-container"></div>
+
+  <!-- --- SCRIPTS --- -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- App configurations and code -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
