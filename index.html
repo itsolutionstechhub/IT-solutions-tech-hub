@@ -305,6 +305,56 @@
               </div>
             </div>
           </div>
+          
+          <!-- Comments Section -->
+          <div class="comments-wrapper-box" style="margin-top: 30px; padding: 30px; border-radius: var(--radius-md); border: 1px solid hsl(var(--border-color)); background: hsl(var(--bg-card));">
+            <h3 style="color: hsl(var(--primary)); margin-bottom: 24px; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-comments"></i> Discussion & User Comments
+            </h3>
+
+            <!-- Authentication Status Block -->
+            <div id="comments-auth-block" style="margin-bottom: 30px; padding: 20px; background: hsl(var(--bg-dark)); border-radius: var(--radius-sm); border: 1px solid hsl(var(--border-color)); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+              <!-- Logged out view -->
+              <div id="comments-logged-out" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+                <span style="color: hsl(var(--text-secondary)); font-size: 14px;">Sign in with your Google account to join the discussion and write comments:</span>
+                <button type="button" class="btn btn-shop-buy" id="btn-comments-google-login" style="padding: 10px 20px; border-radius: var(--radius-full); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; background: #fff; color: #1f2937; border: 1px solid #d1d5db;">
+                  <i class="fa-brands fa-google" style="color: #ea4335; font-size: 16px;"></i> Sign in with Google
+                </button>
+              </div>
+
+              <!-- Logged in view -->
+              <div id="comments-logged-in" style="display: none; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <img id="comments-user-avatar" src="" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid hsl(var(--primary));" alt="Avatar">
+                  <div>
+                    <h4 id="comments-user-name" style="font-size: 14px; font-weight: 700; margin: 0;">User Name</h4>
+                    <span id="comments-user-email" style="font-size: 12px; color: hsl(var(--text-muted));">User Email</span>
+                  </div>
+                </div>
+                <button type="button" id="btn-comments-logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; border-radius: var(--radius-full);">
+                  <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                </button>
+              </div>
+            </div>
+
+            <!-- Comment Input Block (Shown when authenticated) -->
+            <div id="comments-input-area" style="display: none; margin-bottom: 30px;">
+              <form id="comment-submission-form">
+                <div class="form-group" style="margin-bottom: 15px;">
+                  <label for="comment-text" style="font-size: 13px; font-weight: 600; color: hsl(var(--text-secondary)); margin-bottom: 8px; display: block;">Write a Comment</label>
+                  <textarea id="comment-text" class="form-control" style="min-height: 90px; width: 100%; border-radius: var(--radius-sm); padding: 12px; font-size: 14px; line-height: 1.6;" placeholder="Type your comment details here..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 24px; font-size: 13px; font-weight: 600; border-radius: var(--radius-full);">
+                  <i class="fa-solid fa-paper-plane"></i> Post Comment
+                </button>
+              </form>
+            </div>
+
+            <!-- Comments Feed Thread -->
+            <div id="comments-list-thread" style="display: flex; flex-direction: column; gap: 20px;">
+              <!-- comments list items will be injected dynamically -->
+            </div>
+          </div>
         </div>
       </section>
 
@@ -704,6 +754,7 @@
   <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   
   <!-- App configurations and code -->
   <script src="js/firebase-config.js"></script>
