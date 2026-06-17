@@ -6,6 +6,11 @@ let currentFormImages = ["", "", "", ""];
 let currentActiveSlot = 0;
 let previousFeedView = "home"; // Remembers which page to return to from Detail View
 
+// Firebase Auth & Comments State
+let auth = null;
+let currentUser = null;
+let activeDetailedPostId = null;
+
 // Global Site Settings State (Defaults populated before load)
 let siteSettings = {
   siteName: "Laptop Tech Hub",
@@ -87,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupContactForm();
   setupLiveSearch();
   setupDetailViewBackBtn();
+  setupCommentsForm();
   renderAllData();
   startAutoCarouselLoop();
 });
@@ -98,9 +104,16 @@ function initFirebase() {
     try {
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
+      auth = firebase.auth();
       isFirebaseActive = true;
-      console.log("Firebase Firestore connected successfully!");
+      console.log("Firebase Firestore & Auth connected successfully!");
       if (warningBanner) warningBanner.style.display = "none";
+
+      // Listen for Auth changes
+      auth.onAuthStateChanged((user) => {
+        currentUser = user;
+        updateCommentsAuthUI();
+      });
     } catch (error) {
       console.error("Firebase initialization failed:", error);
       isFirebaseActive = false;
@@ -1411,6 +1424,9 @@ window.viewPostDetail = function(postId) {
   const post = posts.find(p => p.id === postId);
   if (!post) return;
 
+  activeDetailedPostId = postId; // Store current postId globally
+  loadPostComments(postId); // Fetch comments in real-time
+
   // Remembers previous view (e.g. home, tech-news, repair-articles, store)
   const activeSection = document.querySelector(".view-section.active");
   if (activeSection) {
@@ -1960,4 +1976,246 @@ window.setCarouselSlide = function(dot, index) {
       d.classList.remove('active');
     }
   });
+};
+
+// --- DISCUSSION & COMMENTS ENGINE ---
+
+function setupCommentsForm() {
+  const loginBtn = document.getElementById("btn-comments-google-login");
+  const logoutBtn = document.getElementById("btn-comments-logout");
+  const commentForm = document.getElementById("comment-submission-form");
+
+  if (loginBtn) loginBtn.addEventListener("click", loginWithGoogle);
+  if (logoutBtn) logoutBtn.addEventListener("click", logout);
+  if (commentForm) {
+    commentForm.addEventListener("submit", submitComment);
+  }
+}
+
+function loginWithGoogle() {
+  if (!isFirebaseActive || !auth) {
+    showToast("Login only available in Live Online Mode.", "warning");
+    return;
+  }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      showToast(`Logged in as ${result.user.displayName}`, "success");
+    })
+    .catch((error) => {
+      console.error("Google authentication failed:", error);
+      showToast("Sign in failed. Check your Firebase config or try again.", "danger");
+    });
+}
+
+function logout() {
+  if (auth) {
+    auth.signOut().then(() => {
+      showToast("Signed out successfully.", "success");
+    });
+  }
+}
+
+function updateCommentsAuthUI() {
+  const loggedOutBlock = document.getElementById("comments-logged-out");
+  const loggedInBlock = document.getElementById("comments-logged-in");
+  const inputArea = document.getElementById("comments-input-area");
+  
+  const userAvatar = document.getElementById("comments-user-avatar");
+  const userName = document.getElementById("comments-user-name");
+  const userEmail = document.getElementById("comments-user-email");
+
+  if (currentUser) {
+    if (loggedOutBlock) loggedOutBlock.style.display = "none";
+    if (loggedInBlock) loggedInBlock.style.display = "flex";
+    if (inputArea) inputArea.style.display = "block";
+
+    if (userAvatar) userAvatar.src = currentUser.photoURL || "https://www.gravatar.com/avatar/?d=mp";
+    if (userName) userName.innerText = currentUser.displayName;
+    if (userEmail) userEmail.innerText = currentUser.email;
+  } else {
+    if (loggedOutBlock) loggedOutBlock.style.display = "flex";
+    if (loggedInBlock) loggedInBlock.style.display = "none";
+    if (inputArea) inputArea.style.display = "none";
+  }
+
+  // Refresh dynamic delete icons on current comments feed
+  if (activeDetailedPostId) {
+    renderDeleteIcons();
+  }
+}
+
+function submitComment(e) {
+  e.preventDefault();
+  
+  if (!currentUser) {
+    showToast("Please sign in to write comments.", "warning");
+    return;
+  }
+
+  const commentTextEl = document.getElementById("comment-text");
+  const text = commentTextEl.value.trim();
+  if (!text) return;
+
+  const commentId = "comment-" + Date.now();
+  const commentData = {
+    id: commentId,
+    postId: activeDetailedPostId,
+    uid: currentUser.uid,
+    userName: currentUser.displayName,
+    userPhoto: currentUser.photoURL || "",
+    text: text,
+    createdAt: new Date().toISOString()
+  };
+
+  if (isFirebaseActive) {
+    db.collection("comments").doc(commentId).set(commentData)
+      .then(() => {
+        commentTextEl.value = "";
+        showToast("Comment published!", "success");
+      })
+      .catch((err) => {
+        console.error("Firestore save comment error:", err);
+        showToast("Failed to publish comment.", "danger");
+      });
+  } else {
+    // Offline local storage fallback
+    const offlineComments = JSON.parse(localStorage.getItem("laptop_tech_comments") || "[]");
+    offlineComments.unshift(commentData);
+    localStorage.setItem("laptop_tech_comments", JSON.stringify(offlineComments));
+    commentTextEl.value = "";
+    showToast("Comment saved locally (Offline).", "success");
+    
+    // Trigger local list render
+    loadLocalOfflineComments(activeDetailedPostId);
+  }
+}
+
+function loadPostComments(postId) {
+  if (isFirebaseActive) {
+    // Unsubscribe previous collection listener if active
+    if (window.activeCommentsUnsubscribe) {
+      window.activeCommentsUnsubscribe();
+    }
+
+    window.activeCommentsUnsubscribe = db.collection("comments")
+      .where("postId", "==", postId)
+      .orderBy("createdAt", "asc")
+      .onSnapshot((snapshot) => {
+        const list = [];
+        snapshot.forEach((doc) => {
+          list.push(doc.data());
+        });
+        renderCommentsFeed(list);
+      }, (err) => {
+        console.error("Comments subscription failed:", err);
+      });
+  } else {
+    loadLocalOfflineComments(postId);
+  }
+}
+
+function loadLocalOfflineComments(postId) {
+  const offlineComments = JSON.parse(localStorage.getItem("laptop_tech_comments") || "[]");
+  const filtered = offlineComments
+    .filter(c => c.postId === postId)
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  renderCommentsFeed(filtered);
+}
+
+function renderCommentsFeed(comments) {
+  const thread = document.getElementById("comments-list-thread");
+  if (!thread) return;
+  
+  thread.innerHTML = "";
+
+  if (comments.length === 0) {
+    thread.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: hsl(var(--text-muted)); font-size: 14px;">
+        <i class="fa-solid fa-comments" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+        No comments yet. Be the first to start the discussion!
+      </div>
+    `;
+    return;
+  }
+
+  comments.forEach((comment) => {
+    const isOwner = currentUser && currentUser.uid === comment.uid;
+    const isAdmin = sessionStorage.getItem("isAdminAuthenticated") === "true";
+    const showDelete = isOwner || isAdmin;
+
+    const formattedDate = new Date(comment.createdAt).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const commentItem = document.createElement("div");
+    commentItem.className = "comment-item";
+    commentItem.style.display = "flex";
+    commentItem.style.gap = "15px";
+    commentItem.style.padding = "15px";
+    commentItem.style.background = "hsl(var(--bg-dark))";
+    commentItem.style.borderRadius = "var(--radius-sm)";
+    commentItem.style.border = "1px solid hsl(var(--border-color) / 0.5)";
+
+    commentItem.innerHTML = `
+      <img src="${comment.userPhoto || 'https://www.gravatar.com/avatar/?d=mp'}" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid hsl(var(--border-color)); object-fit: cover;" alt="Avatar">
+      <div style="flex: 1;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <div>
+            <span style="font-size: 14px; font-weight: 700; color: hsl(var(--text-primary));">${comment.userName}</span>
+            <span style="font-size: 11px; color: hsl(var(--text-muted)); margin-left: 10px;">${formattedDate}</span>
+          </div>
+          ${showDelete ? `
+            <button type="button" class="btn-comment-delete" onclick="triggerDeleteComment('${comment.id}')" style="background: none; border: none; color: hsl(var(--danger)); cursor: pointer; font-size: 12px; opacity: 0.7; transition: opacity var(--transition-fast);" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          ` : ""}
+        </div>
+        <p style="font-size: 14px; color: hsl(var(--text-secondary)); line-height: 1.5; white-space: pre-wrap; margin: 0;">${comment.text}</p>
+      </div>
+    `;
+    thread.appendChild(commentItem);
+  });
+}
+
+function renderDeleteIcons() {
+  if (activeDetailedPostId) {
+    if (isFirebaseActive) {
+      db.collection("comments")
+        .where("postId", "==", activeDetailedPostId)
+        .orderBy("createdAt", "asc")
+        .get()
+        .then((snapshot) => {
+          const list = [];
+          snapshot.forEach((doc) => list.push(doc.data()));
+          renderCommentsFeed(list);
+        });
+    } else {
+      loadLocalOfflineComments(activeDetailedPostId);
+    }
+  }
+}
+
+window.triggerDeleteComment = function(commentId) {
+  if (confirm("Are you sure you want to delete this comment?")) {
+    if (isFirebaseActive) {
+      db.collection("comments").doc(commentId).delete()
+        .then(() => {
+          showToast("Comment deleted successfully.", "success");
+        })
+        .catch((err) => {
+          console.error("Firestore delete comment error:", err);
+          showToast("Failed to delete comment.", "danger");
+        });
+    } else {
+      let offlineComments = JSON.parse(localStorage.getItem("laptop_tech_comments") || "[]");
+      offlineComments = offlineComments.filter(c => c.id !== commentId);
+      localStorage.setItem("laptop_tech_comments", JSON.stringify(offlineComments));
+      showToast("Comment deleted locally.", "success");
+      loadLocalOfflineComments(activeDetailedPostId);
+    }
+  }
 };
