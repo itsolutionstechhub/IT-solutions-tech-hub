@@ -2100,12 +2100,13 @@ function loadPostComments(postId) {
 
     window.activeCommentsUnsubscribe = db.collection("comments")
       .where("postId", "==", postId)
-      .orderBy("createdAt", "asc")
       .onSnapshot((snapshot) => {
         const list = [];
         snapshot.forEach((doc) => {
           list.push(doc.data());
         });
+        // Sort client-side by createdAt asc to bypass composite index requirements
+        list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         renderCommentsFeed(list);
       }, (err) => {
         console.error("Comments subscription failed:", err);
@@ -2186,11 +2187,12 @@ function renderDeleteIcons() {
     if (isFirebaseActive) {
       db.collection("comments")
         .where("postId", "==", activeDetailedPostId)
-        .orderBy("createdAt", "asc")
         .get()
         .then((snapshot) => {
           const list = [];
           snapshot.forEach((doc) => list.push(doc.data()));
+          // Sort client-side by createdAt asc to bypass composite index requirements
+          list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
           renderCommentsFeed(list);
         });
     } else {
