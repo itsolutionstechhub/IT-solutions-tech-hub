@@ -827,6 +827,20 @@ textarea.form-control {
   flex-shrink: 0;
 }
 
+.contact-email-icon {
+  background: linear-gradient(135deg, #ea4335, #c5221f) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(234, 67, 53, 0.35);
+}
+
+.contact-whatsapp-icon {
+  background: linear-gradient(135deg, #25d366, #128c7e) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+}
+
 .info-text h4 {
   font-size: 16px;
   margin-bottom: 4px;
