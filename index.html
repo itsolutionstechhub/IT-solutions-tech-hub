@@ -374,6 +374,7 @@
               <span class="admin-tab-btn active" id="tab-manage-posts-btn">Manage Posts</span>
               <span class="admin-tab-btn" id="tab-messages-btn">Inbox (<span id="inbox-badge-count">0</span>)</span>
               <span class="admin-tab-btn" id="tab-settings-btn"><i class="fa-solid fa-sliders"></i> Site Settings</span>
+              <span class="admin-tab-btn" id="tab-comments-btn"><i class="fa-solid fa-comments"></i> Comments</span>
             </div>
           </div>
 
@@ -675,6 +676,33 @@
                 <i class="fa-solid fa-floppy-disk"></i> Save Dynamic Site Configurations
               </button>
             </form>
+          </div>
+
+          <!-- Tab 4 Content: Manage Comments (Moderation) -->
+          <div class="admin-dashboard-layout" id="admin-tab-comments" style="display: none; width: 100%;">
+            <div class="admin-table-panel" style="width: 100%; overflow-x: auto; background: hsl(var(--bg-card)); padding: 25px; border-radius: var(--radius-md); border: 1px solid hsl(var(--border-color));">
+              <h3 style="color: hsl(var(--primary)); margin-bottom: 8px; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-comments"></i> Manage Comments
+              </h3>
+              <p style="color: hsl(var(--text-secondary)); font-size: 13px; margin-bottom: 20px;">Moderate user discussions and comment threads across all posts.</p>
+              
+              <div style="width: 100%; overflow-x: auto;">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left; min-width: 600px;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid hsl(var(--border-color));">
+                      <th style="padding: 12px; font-size: 13px; font-weight: 700; color: hsl(var(--text-primary));">Post ID / Title</th>
+                      <th style="padding: 12px; font-size: 13px; font-weight: 700; color: hsl(var(--text-primary));">User</th>
+                      <th style="padding: 12px; font-size: 13px; font-weight: 700; color: hsl(var(--text-primary));">Comment</th>
+                      <th style="padding: 12px; font-size: 13px; font-weight: 700; color: hsl(var(--text-primary));">Date</th>
+                      <th style="padding: 12px; font-size: 13px; font-weight: 700; color: hsl(var(--text-primary)); text-align: right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-comments-table-body">
+                    <!-- Injected dynamically via JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
         </div>

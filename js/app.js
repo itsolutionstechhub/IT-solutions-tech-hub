@@ -741,27 +741,33 @@ function setupAdminPortal() {
   const tabManagePostsBtn = document.getElementById("tab-manage-posts-btn");
   const tabMessagesBtn = document.getElementById("tab-messages-btn");
   const tabSettingsBtn = document.getElementById("tab-settings-btn");
+  const tabCommentsBtn = document.getElementById("tab-comments-btn");
 
   const tabManagePostsContent = document.getElementById("admin-tab-manage-posts");
   const tabMessagesContent = document.getElementById("admin-tab-messages");
   const tabSettingsContent = document.getElementById("admin-tab-settings");
+  const tabCommentsContent = document.getElementById("admin-tab-comments");
 
   tabManagePostsBtn.addEventListener("click", () => {
     tabManagePostsBtn.classList.add("active");
     tabMessagesBtn.classList.remove("active");
     tabSettingsBtn.classList.remove("active");
+    if (tabCommentsBtn) tabCommentsBtn.classList.remove("active");
     tabManagePostsContent.style.display = "grid";
     tabMessagesContent.style.display = "none";
     tabSettingsContent.style.display = "none";
+    if (tabCommentsContent) tabCommentsContent.style.display = "none";
   });
 
   tabMessagesBtn.addEventListener("click", () => {
     tabMessagesBtn.classList.add("active");
     tabManagePostsBtn.classList.remove("active");
     tabSettingsBtn.classList.remove("active");
+    if (tabCommentsBtn) tabCommentsBtn.classList.remove("active");
     tabMessagesContent.style.display = "block";
     tabManagePostsContent.style.display = "none";
     tabSettingsContent.style.display = "none";
+    if (tabCommentsContent) tabCommentsContent.style.display = "none";
     renderAdminMessagesInbox();
   });
 
@@ -769,10 +775,26 @@ function setupAdminPortal() {
     tabSettingsBtn.classList.add("active");
     tabManagePostsBtn.classList.remove("active");
     tabMessagesBtn.classList.remove("active");
+    if (tabCommentsBtn) tabCommentsBtn.classList.remove("active");
     tabSettingsContent.style.display = "block";
     tabManagePostsContent.style.display = "none";
     tabMessagesContent.style.display = "none";
+    if (tabCommentsContent) tabCommentsContent.style.display = "none";
   });
+
+  if (tabCommentsBtn) {
+    tabCommentsBtn.addEventListener("click", () => {
+      tabCommentsBtn.classList.add("active");
+      tabManagePostsBtn.classList.remove("active");
+      tabMessagesBtn.classList.remove("active");
+      tabSettingsBtn.classList.remove("active");
+      if (tabCommentsContent) tabCommentsContent.style.display = "block";
+      tabManagePostsContent.style.display = "none";
+      tabMessagesContent.style.display = "none";
+      tabSettingsContent.style.display = "none";
+      renderAdminCommentsTable();
+    });
+  }
 
   // --- DYNAMIC FORM FIELD TOGGLES ---
   const formCategorySelect = document.getElementById("form-category");
@@ -2144,6 +2166,7 @@ function renderCommentsFeed(comments) {
     const isOwner = currentUser && currentUser.uid === comment.uid;
     const isAdmin = sessionStorage.getItem("isAdminAuthenticated") === "true";
     const showDelete = isOwner || isAdmin;
+    const showEdit = isOwner;
 
     const formattedDate = new Date(comment.createdAt).toLocaleString(undefined, {
       month: "short",
@@ -2163,19 +2186,28 @@ function renderCommentsFeed(comments) {
 
     commentItem.innerHTML = `
       <img src="${comment.userPhoto || 'https://www.gravatar.com/avatar/?d=mp'}" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid hsl(var(--border-color)); object-fit: cover;" alt="Avatar">
-      <div style="flex: 1;">
+      <div id="comment-body-${comment.id}" style="flex: 1;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
           <div>
             <span style="font-size: 14px; font-weight: 700; color: hsl(var(--text-primary));">${comment.userName}</span>
-            <span style="font-size: 11px; color: hsl(var(--text-muted)); margin-left: 10px;">${formattedDate}</span>
+            <span style="font-size: 11px; color: hsl(var(--text-muted)); margin-left: 10px;">
+              ${formattedDate}${comment.updatedAt ? " <span style='font-style: italic; opacity: 0.8;'>(Edited)</span>" : ""}
+            </span>
           </div>
-          ${showDelete ? `
-            <button type="button" class="btn-comment-delete" onclick="triggerDeleteComment('${comment.id}')" style="background: none; border: none; color: hsl(var(--danger)); cursor: pointer; font-size: 12px; opacity: 0.7; transition: opacity var(--transition-fast);" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          ` : ""}
+          <div style="display: flex; align-items: center; gap: 10px;">
+            ${showEdit ? `
+              <button type="button" class="btn-comment-edit" onclick="triggerEditComment('${comment.id}', \`${comment.text.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" style="background: none; border: none; color: hsl(var(--primary)); cursor: pointer; font-size: 12px; opacity: 0.7; transition: opacity var(--transition-fast);" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Edit Comment">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            ` : ""}
+            ${showDelete ? `
+              <button type="button" class="btn-comment-delete" onclick="triggerDeleteComment('${comment.id}')" style="background: none; border: none; color: hsl(var(--danger)); cursor: pointer; font-size: 12px; opacity: 0.7; transition: opacity var(--transition-fast);" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Delete Comment">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            ` : ""}
+          </div>
         </div>
-        <p style="font-size: 14px; color: hsl(var(--text-secondary)); line-height: 1.5; white-space: pre-wrap; margin: 0;">${comment.text}</p>
+        <p id="comment-text-${comment.id}" style="font-size: 14px; color: hsl(var(--text-secondary)); line-height: 1.5; white-space: pre-wrap; margin: 0;">${comment.text}</p>
       </div>
     `;
     thread.appendChild(commentItem);
@@ -2221,3 +2253,129 @@ window.triggerDeleteComment = function(commentId) {
     }
   }
 };
+
+window.triggerEditComment = function(commentId, currentText) {
+  const commentBody = document.getElementById(`comment-body-${commentId}`);
+  if (!commentBody) return;
+
+  commentBody.innerHTML = `
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+      <textarea id="edit-textarea-${commentId}" class="form-control" style="min-height: 70px; width: 100%; font-size: 13px; line-height: 1.5; padding: 8px; border-radius: var(--radius-sm); border: 1px solid hsl(var(--border-color)); background: hsl(var(--bg-dark)); color: hsl(var(--text-primary));" required>${currentText}</textarea>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" id="btn-cancel-edit-${commentId}" style="padding: 4px 10px; font-size: 11px; border: 1px solid hsl(var(--border-color)); background: none; color: hsl(var(--text-secondary)); border-radius: var(--radius-sm); cursor: pointer;">Cancel</button>
+        <button type="button" id="btn-save-edit-${commentId}" style="padding: 4px 10px; font-size: 11px; border: none; background: hsl(var(--primary)); color: #000; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer;">Save</button>
+      </div>
+    </div>
+  `;
+
+  // Attach event listener for cancel
+  document.getElementById(`btn-cancel-edit-${commentId}`).addEventListener("click", () => {
+    if (activeDetailedPostId) {
+      loadPostComments(activeDetailedPostId);
+    }
+  });
+
+  // Attach event listener for save
+  document.getElementById(`btn-save-edit-${commentId}`).addEventListener("click", () => {
+    const newText = document.getElementById(`edit-textarea-${commentId}`).value.trim();
+    if (!newText) return;
+
+    if (isFirebaseActive) {
+      db.collection("comments").doc(commentId).update({
+        text: newText,
+        updatedAt: new Date().toISOString()
+      })
+      .then(() => {
+        showToast("Comment updated successfully.", "success");
+      })
+      .catch((err) => {
+        console.error("Firestore edit comment error:", err);
+        showToast("Failed to edit comment.", "danger");
+      });
+    } else {
+      // Offline fallback
+      let offlineComments = JSON.parse(localStorage.getItem("laptop_tech_comments") || "[]");
+      const index = offlineComments.findIndex(c => c.id === commentId);
+      if (index !== -1) {
+        offlineComments[index].text = newText;
+        offlineComments[index].updatedAt = new Date().toISOString();
+        localStorage.setItem("laptop_tech_comments", JSON.stringify(offlineComments));
+        showToast("Comment updated locally.", "success");
+        loadLocalOfflineComments(activeDetailedPostId);
+      }
+    }
+  });
+};
+
+function renderAdminCommentsTable() {
+  if (!isFirebaseActive) {
+    const tbody = document.getElementById("admin-comments-table-body");
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 20px; color: hsl(var(--text-secondary));">
+            Comments moderation is only available in Live Online Mode.
+          </td>
+        </tr>
+      `;
+    }
+    return;
+  }
+  
+  db.collection("comments")
+    .onSnapshot((snapshot) => {
+      const list = [];
+      snapshot.forEach((doc) => list.push(doc.data()));
+      
+      // Sort client-side by createdAt desc (newest first)
+      list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      const tbody = document.getElementById("admin-comments-table-body");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 20px; color: hsl(var(--text-secondary));">No comments found.</td>
+          </tr>
+        `;
+        return;
+      }
+      
+      list.forEach((comment) => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid hsl(var(--border-color) / 0.5)";
+        
+        // Find post title if available in posts array
+        const post = posts.find(p => p.id === comment.postId);
+        const postTitle = post ? post.title : (comment.postId || "Unknown Post");
+        
+        const formattedDate = new Date(comment.createdAt).toLocaleString();
+        
+        tr.innerHTML = `
+          <td style="padding: 12px; font-size: 13px; color: hsl(var(--text-secondary)); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${postTitle}">
+            ${postTitle}
+          </td>
+          <td style="padding: 12px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+            <img src="${comment.userPhoto || 'https://www.gravatar.com/avatar/?d=mp'}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+            <span>${comment.userName}</span>
+          </td>
+          <td style="padding: 12px; font-size: 13px; color: hsl(var(--text-secondary)); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${comment.text}">
+            ${comment.text}
+          </td>
+          <td style="padding: 12px; font-size: 13px; color: hsl(var(--text-muted));">
+            ${formattedDate}
+          </td>
+          <td style="padding: 12px; font-size: 13px; text-align: right;">
+            <button type="button" class="btn btn-secondary" onclick="triggerDeleteComment('${comment.id}')" style="padding: 4px 8px; font-size: 11px; background: hsl(var(--danger) / 0.1); color: hsl(var(--danger)); border: 1px solid hsl(var(--danger) / 0.3); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast);" onmouseover="this.style.background='hsl(var(--danger))'; this.style.color='#fff'" onmouseout="this.style.background='hsl(var(--danger) / 0.1)'; this.style.color='hsl(var(--danger))'">
+              Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }, (err) => {
+      console.error("Failed to fetch comments for admin:", err);
+    });
+}
