@@ -34,13 +34,33 @@ let siteSettings = {
     <li><strong>Organized & Searchable:</strong> Find files instantly by motherboard code, CPU platform architecture, or laptop model.</li>
     <li><strong>Expert Sourced:</strong> Our inventory items and tools are handpicked by experienced circuit board analysts.</li>
   </ul>`,
-  privacyPolicy: `<h2>Privacy Policy</h2>
-  <p>Last updated: June 4, 2026</p>
-  <p>At Laptop Tech Hub, accessible from our portal, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Laptop Tech Hub and how we use it.</p>
+  privacyPolicy: `<h2>Privacy Policy for Laptop Tech Hub</h2>
+  <p>Last updated: June 18, 2026</p>
+  <p>At Laptop Tech Hub, accessible from our portal, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Laptop Tech Hub and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>
+  
+  <h2>Consent</h2>
+  <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</p>
+  
   <h2>Log Files</h2>
-  <p>Laptop Tech Hub follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable.</p>
+  <p>Laptop Tech Hub follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this as part of hosting services' analytics. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
+  
   <h2>Cookies and Web Beacons</h2>
-  <p>Like any other website, Laptop Tech Hub uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>`,
+  <p>Like any other website, Laptop Tech Hub uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+  
+  <h2>Google DoubleClick DART Cookie</h2>
+  <p>Google is one of the third-party vendors on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to our site and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" target="_blank" style="color: hsl(var(--primary)); text-decoration: underline;">https://policies.google.com/technologies/ads</a></p>
+  
+  <h2>Our Advertising Partners</h2>
+  <p>Some of the advertisers on our site may use cookies and web beacons. Our advertising partners include Google AdSense. Each of our advertising partners has their own Privacy Policy for their policies on user data. For easier access, we hyperlinked to their Privacy Policies below:</p>
+  <ul>
+    <li>Google: <a href="https://policies.google.com/technologies/ads" target="_blank" style="color: hsl(var(--primary)); text-decoration: underline;">https://policies.google.com/technologies/ads</a></li>
+  </ul>
+  
+  <h2>CCPA Privacy Rights (Do Not Sell My Personal Information)</h2>
+  <p>Under the CCPA, among other rights, California consumers have the right to request that a business that collects a consumer's personal data disclose the categories and specific pieces of personal data that a business has collected about consumers, request that a business delete any personal data about the consumer that a business has collected, and request that a business that sells a consumer's personal data, not sell the consumer's personal data.</p>
+  
+  <h2>GDPR Data Protection Rights</h2>
+  <p>We would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following: The right to access, the right to rectification, the right to erasure, the right to restrict processing, the right to object to processing, and the right to data portability.</p>`,
   termsConditions: `<h2>Terms & Conditions</h2>
   <p>Last updated: June 4, 2026</p>
   <p>Welcome to Laptop Tech Hub! These terms and conditions outline the rules and regulations for the use of Laptop Tech Hub's Website.</p>
@@ -93,8 +113,26 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLiveSearch();
   setupDetailViewBackBtn();
   setupCommentsForm();
+  setupCookieConsent(); // Setup Cookie Banner
   renderAllData();
   startAutoCarouselLoop();
+
+  // Listen to URL hash changes
+  window.addEventListener("hashchange", handleRouting);
+  // Route to the starting view on initial load
+  handleRouting();
+
+  // Protect image assets: Disable right-click and image dragging
+  document.addEventListener("contextmenu", (e) => {
+    if (e.target.tagName === "IMG") {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener("dragstart", (e) => {
+    if (e.target.tagName === "IMG") {
+      e.preventDefault();
+    }
+  });
 });
 
 // Initialize Firebase client if configured
@@ -156,6 +194,9 @@ function initData() {
       } else {
         renderAllData();
         renderAdminPostsTable();
+        if (typeof handleRouting === "function") {
+          handleRouting();
+        }
       }
     }, (error) => {
       console.error("Failed to read posts from Firestore:", error);
@@ -294,6 +335,9 @@ function loadLocalFallbackPosts() {
   } else if (typeof DEFAULT_MESSAGES !== "undefined") {
     messages = [...DEFAULT_MESSAGES];
     localStorage.setItem("laptop_tech_messages", JSON.stringify(messages));
+  }
+  if (typeof handleRouting === "function") {
+    handleRouting();
   }
 }
 
@@ -529,6 +573,17 @@ function applySettingsToUI() {
 
   // Add body class once settings are applied to fade in navigation links
   document.body.classList.add("settings-applied");
+  
+  // Re-assert correct SEO title based on active view
+  const currentHash = window.location.hash || "#home";
+  if (currentHash.startsWith("#post-detail")) {
+    if (activeDetailedPostId) {
+      const post = posts.find(p => p.id === activeDetailedPostId);
+      if (post) updatePageSEOTitle("post-detail", post.title);
+    }
+  } else {
+    updatePageSEOTitle(currentHash.replace("#", ""));
+  }
 }
 
 // Save Settings Event Handler
@@ -615,36 +670,11 @@ function setupAdminSettings() {
 function setupSPARouter() {
   const navLinks = document.querySelectorAll("#navbar .nav-link");
   const footerLinks = document.querySelectorAll("footer [data-target]");
-  const viewSections = document.querySelectorAll(".view-section");
   const hamburgerBtn = document.getElementById("hamburger-btn");
   const navbar = document.getElementById("navbar");
   const logoBtn = document.getElementById("logo-btn");
   const authModal = document.getElementById("admin-auth-modal");
   const authPasscode = document.getElementById("auth-passcode");
-
-  function switchView(targetViewId) {
-    // Hide all sections, remove active links
-    viewSections.forEach(section => section.classList.remove("active"));
-    navLinks.forEach(link => link.classList.remove("active"));
-
-    // Find target section
-    const targetSection = document.getElementById(`view-${targetViewId}`);
-    if (targetSection) {
-      targetSection.classList.add("active");
-      
-      // Update nav link selection if applicable
-      const matchingNavLink = document.querySelector(`#navbar .nav-link[data-target="${targetViewId}"]`);
-      if (matchingNavLink) {
-        matchingNavLink.classList.add("active");
-      }
-      
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    // Close mobile menu if open
-    navbar.classList.remove("open");
-    hamburgerBtn.classList.remove("open");
-  }
 
   // Intercept nav link clicks with authentication check for admin
   navLinks.forEach(link => {
@@ -656,7 +686,7 @@ function setupSPARouter() {
         authPasscode.focus();
         return;
       }
-      switchView(target);
+      window.location.hash = target;
     });
   });
 
@@ -664,14 +694,14 @@ function setupSPARouter() {
   footerLinks.forEach(link => {
     link.addEventListener("click", () => {
       const target = link.getAttribute("data-target");
-      switchView(target);
+      window.location.hash = target;
     });
   });
 
   // Logo click
   logoBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    switchView("home");
+    window.location.hash = "home";
   });
 
   // Mobile menu hamburger toggle
@@ -685,13 +715,141 @@ function setupSPARouter() {
     card.addEventListener("click", () => {
       const target = card.getAttribute("data-target");
       if (target) {
-        switchView(target);
+        window.location.hash = target;
       }
     });
   });
 
   // Expose router function globally
-  window.navigateToView = switchView;
+  window.navigateToView = (targetViewId) => {
+    window.location.hash = targetViewId;
+  };
+}
+
+// Router Event Handler triggered on hashchange and DOM load
+function handleRouting() {
+  const hash = window.location.hash || "#home";
+  
+  if (hash.startsWith("#post-detail")) {
+    const queryIndex = hash.indexOf("?");
+    if (queryIndex !== -1) {
+      const params = new URLSearchParams(hash.substring(queryIndex));
+      const postId = params.get("id");
+      if (postId) {
+        if (posts && posts.length > 0) {
+          window.viewPostDetailDirect(postId);
+        }
+        return;
+      }
+    }
+  }
+
+  const targetViewId = hash.replace("#", "");
+  
+  // Guard admin view with auth
+  if (targetViewId === "admin" && sessionStorage.getItem("isAdminAuthenticated") !== "true") {
+    window.location.hash = "home";
+    const authModal = document.getElementById("admin-auth-modal");
+    const authPasscode = document.getElementById("auth-passcode");
+    if (authModal && authPasscode) {
+      authModal.classList.add("active");
+      authPasscode.focus();
+    }
+    return;
+  }
+
+  const targetSection = document.getElementById(`view-${targetViewId}`);
+  if (targetSection) {
+    switchViewDirect(targetViewId);
+  } else {
+    window.location.hash = "home";
+  }
+}
+
+// Direct section switching logic
+function switchViewDirect(targetViewId) {
+  const navLinks = document.querySelectorAll("#navbar .nav-link");
+  const viewSections = document.querySelectorAll(".view-section");
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  const navbar = document.getElementById("navbar");
+
+  viewSections.forEach(section => section.classList.remove("active"));
+  navLinks.forEach(link => link.classList.remove("active"));
+
+  if (targetViewId !== "post-detail") {
+    activeDetailedPostId = null;
+  }
+
+  const targetSection = document.getElementById(`view-${targetViewId}`);
+  if (targetSection) {
+    targetSection.classList.add("active");
+    const matchingNavLink = document.querySelector(`#navbar .nav-link[data-target="${targetViewId}"]`);
+    if (matchingNavLink) {
+      matchingNavLink.classList.add("active");
+    }
+    
+    // Update Dynamic SEO page title
+    updatePageSEOTitle(targetViewId);
+    
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  if (navbar && hamburgerBtn) {
+    navbar.classList.remove("open");
+    hamburgerBtn.classList.remove("open");
+  }
+}
+
+// Dynamic SEO page title and description tags updates
+function updatePageSEOTitle(viewId, postTitle = null) {
+  const baseName = siteSettings.siteName || "Laptop Tech Hub";
+  
+  if (postTitle) {
+    document.title = `${postTitle} - ${baseName}`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", `Technical details, schematics, boardview files, or software specifications for ${postTitle} on ${baseName}.`);
+    return;
+  }
+  
+  let label = "";
+  switch (viewId) {
+    case "home":
+      label = "BIOS, Schematics & Software Resources";
+      break;
+    case "tech-news":
+      label = siteSettings.techNewsLabel || "Tech News";
+      break;
+    case "repair-articles":
+      label = siteSettings.repairArticlesLabel || "Repair Articles";
+      break;
+    case "store":
+      label = siteSettings.storeLabel || "Technician Store";
+      break;
+    case "admin":
+      label = "Admin Portal";
+      break;
+    case "about-us":
+      label = "About Us";
+      break;
+    case "contact-us":
+      label = "Contact Us & Support";
+      break;
+    case "privacy-policy":
+      label = "Privacy Policy";
+      break;
+    case "terms-conditions":
+      label = "Terms & Conditions";
+      break;
+    case "disclaimer":
+      label = "Legal Disclaimer";
+      break;
+    default:
+      label = "Resources Hub";
+  }
+  
+  document.title = `${label} - ${baseName}`;
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute("content", `Access dynamic laptop repair resource directory of ${baseName}. View ${label} section.`);
 }
 
 // --- ADMIN PORTAL CONTROLLERS & SECURITY ---
@@ -1447,11 +1605,25 @@ function setupDetailViewBackBtn() {
 }
 
 // Detailed page view router helper
+// Detailed page view router helper (triggers hash change)
 window.viewPostDetail = function(postId) {
+  window.location.hash = `post-detail?id=${postId}`;
+};
+
+// Actual layout renderer and view selector for post detail
+window.viewPostDetailDirect = function(postId) {
   const post = posts.find(p => p.id === postId);
   if (!post) return;
 
+  const isAlreadyViewing = (activeDetailedPostId === postId);
   activeDetailedPostId = postId; // Store current postId globally
+
+  if (isAlreadyViewing) {
+    const viewsEl = document.getElementById("detail-views");
+    if (viewsEl) viewsEl.innerText = post.views || 0;
+    return;
+  }
+
   loadPostComments(postId); // Fetch comments in real-time
 
   // Remembers previous view (e.g. home, tech-news, repair-articles, store)
@@ -1632,10 +1804,11 @@ window.viewPostDetail = function(postId) {
     if (detailLayout) detailLayout.style.gridTemplateColumns = "2.2fr 1fr";
   }
 
-  // Switch to detail view
-  if (typeof window.navigateToView === "function") {
-    window.navigateToView("post-detail");
-  }
+  // Switch to detail view using switchViewDirect
+  switchViewDirect("post-detail");
+  
+  // Set SEO page title matching the active post
+  updatePageSEOTitle("post-detail", post.title);
 };
 
 // --- RENDERING FEEDS (PUBLIC BOARDS) ---
@@ -2400,4 +2573,39 @@ function renderAdminCommentsTable() {
     }, (err) => {
       console.error("Failed to fetch comments for admin:", err);
     });
+}
+
+// --- COOKIE CONSENT BANNER CONTROLLER ---
+function setupCookieConsent() {
+  const banner = document.getElementById("cookie-consent-banner");
+  const acceptBtn = document.getElementById("btn-cookie-accept");
+  const declineBtn = document.getElementById("btn-cookie-decline");
+
+  if (!banner || !acceptBtn || !declineBtn) return;
+
+  const consent = localStorage.getItem("cookie_consent_accepted");
+  if (!consent) {
+    // Show banner after a slight delay for smooth entry animation
+    setTimeout(() => {
+      banner.style.display = "flex";
+    }, 1200);
+  }
+
+  acceptBtn.addEventListener("click", () => {
+    localStorage.setItem("cookie_consent_accepted", "accepted");
+    banner.style.animation = "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards";
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 400);
+    showToast("Cookie preferences saved. Thank you!", "success");
+  });
+
+  declineBtn.addEventListener("click", () => {
+    localStorage.setItem("cookie_consent_accepted", "declined");
+    banner.style.animation = "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards";
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 400);
+    showToast("Cookie preferences saved. Non-essential tracking disabled.", "warning");
+  });
 }
