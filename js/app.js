@@ -1041,6 +1041,7 @@ function setupAdminPortal() {
       category,
       title,
       description,
+      showSpecs: document.getElementById("form-show-specs").value === "show",
       image: coverImage,
       images: populatedImages,
       link: mainLink,
@@ -1249,6 +1250,7 @@ window.triggerEditPost = function(postId) {
   document.getElementById("form-description").value = post.description;
   document.getElementById("form-link").value = post.link || "#";
   document.getElementById("form-download").value = post.downloadLink || "#";
+  document.getElementById("form-show-specs").value = post.showSpecs === false ? "hide" : "show";
 
   const priceGroup = document.getElementById("form-price-group");
   if (post.category === "store") {
@@ -1619,6 +1621,17 @@ window.viewPostDetail = function(postId) {
     }
   }
 
+  // Toggle specifications sidebar display and details page split layout columns count
+  const detailLayout = document.querySelector(".detail-split-layout");
+  const specsSidebar = document.getElementById("detail-specs-sidebar");
+  if (post.showSpecs === false) {
+    if (specsSidebar) specsSidebar.style.display = "none";
+    if (detailLayout) detailLayout.style.gridTemplateColumns = "1fr";
+  } else {
+    if (specsSidebar) specsSidebar.style.display = "block";
+    if (detailLayout) detailLayout.style.gridTemplateColumns = "2.2fr 1fr";
+  }
+
   // Switch to detail view
   if (typeof window.navigateToView === "function") {
     window.navigateToView("post-detail");
@@ -1746,71 +1759,75 @@ function generateCardHTML(post) {
 
   // Generate specs
   let specsHTML = "";
-  if (post.category === "repair-articles" && post.metadata) {
-    specsHTML = `
-      <div class="card-spec-grid">
-        <div class="spec-item">
-          <div class="spec-label">Board Model</div>
-          <div class="spec-value" title="${post.metadata.board || "N/A"}">${post.metadata.board || "N/A"}</div>
+  if (post.showSpecs !== false) {
+    if (post.category === "repair-articles" && post.metadata) {
+      specsHTML = `
+        <div class="card-spec-grid">
+          <div class="spec-item">
+            <div class="spec-label">Board Model</div>
+            <div class="spec-value" title="${post.metadata.board || "N/A"}">${post.metadata.board || "N/A"}</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">File Size</div>
+            <div class="spec-value">${post.metadata.size || "N/A"}</div>
+          </div>
+          <div class="spec-item" style="grid-column: span 2;">
+            <div class="spec-label">Version / Tool</div>
+            <div class="spec-value">${post.metadata.version || "N/A"}</div>
+          </div>
         </div>
-        <div class="spec-item">
-          <div class="spec-label">File Size</div>
-          <div class="spec-value">${post.metadata.size || "N/A"}</div>
+      `;
+    } else if (post.category === "store" && post.metadata) {
+      specsHTML = `
+        <div class="card-spec-grid">
+          <div class="spec-item">
+            <div class="spec-label">Warranty</div>
+            <div class="spec-value">${post.metadata.warranty || "N/A"}</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Condition</div>
+            <div class="spec-value">${post.metadata.condition || "Brand New"}</div>
+          </div>
+          <div class="spec-item" style="grid-column: span 2;">
+            <div class="spec-label">Availability</div>
+            <div class="spec-value">${post.metadata.stock || "In Stock"}</div>
+          </div>
         </div>
-        <div class="spec-item" style="grid-column: span 2;">
-          <div class="spec-label">Version / Tool</div>
-          <div class="spec-value">${post.metadata.version || "N/A"}</div>
-        </div>
-      </div>
-    `;
-  } else if (post.category === "store" && post.metadata) {
-    specsHTML = `
-      <div class="card-spec-grid">
-        <div class="spec-item">
-          <div class="spec-label">Warranty</div>
-          <div class="spec-value">${post.metadata.warranty || "N/A"}</div>
-        </div>
-        <div class="spec-item">
-          <div class="spec-label">Condition</div>
-          <div class="spec-value">${post.metadata.condition || "Brand New"}</div>
-        </div>
-        <div class="spec-item" style="grid-column: span 2;">
-          <div class="spec-label">Availability</div>
-          <div class="spec-value">${post.metadata.stock || "In Stock"}</div>
-        </div>
-      </div>
-    `;
-  } // news specifications are empty (Source and Read Time removed)
+      `;
+    }
+  }
 
   // Create card actions
   let actionButtons = "";
-  if (post.category === "store") {
-    const rawPhone = siteSettings.phone.replace(/[+\s-]/g, "");
-    const waText = encodeURIComponent(`Hi ${siteSettings.siteName}! I am interested in purchasing "${post.title}". Is it currently available?`);
-    const waLink = `https://wa.me/${rawPhone}?text=${waText}`;
+  if (post.showSpecs !== false) {
+    if (post.category === "store") {
+      const rawPhone = siteSettings.phone.replace(/[+\s-]/g, "");
+      const waText = encodeURIComponent(`Hi ${siteSettings.siteName}! I am interested in purchasing "${post.title}". Is it currently available?`);
+      const waLink = `https://wa.me/${rawPhone}?text=${waText}`;
 
-    actionButtons = `
-      <a href="${waLink}" target="_blank" class="btn btn-shop-buy">
-        <i class="fa-brands fa-whatsapp"></i> Buy/Inquire
-      </a>
-      <button type="button" class="btn btn-secondary" style="padding: 10px 14px;" onclick="viewPostDetail('${post.id}')">
-        <i class="fa-solid fa-eye"></i> Details
-      </button>
-    `;
-  } else {
-    const hasDownload = post.downloadLink && post.downloadLink !== "#";
-    const dlLink = hasDownload ? post.downloadLink : "javascript:showToast('Downloading file has started... (Mock link)', 'success');";
-    
-    actionButtons = `
-      <a href="${dlLink}" class="btn btn-primary" ${hasDownload ? 'download' : ''}>
-        <i class="fa-solid fa-cloud-arrow-down"></i> ${hasDownload ? 'Download' : 'Download Now'}
-      </a>
-      ${post.link && post.link !== "#" ? `
-        <a href="${post.link}" target="_blank" class="btn btn-secondary" style="padding: 10px 14px;" title="Official Source">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      actionButtons = `
+        <a href="${waLink}" target="_blank" class="btn btn-shop-buy">
+          <i class="fa-brands fa-whatsapp"></i> Buy/Inquire
         </a>
-      ` : ""}
-    `;
+        <button type="button" class="btn btn-secondary" style="padding: 10px 14px;" onclick="viewPostDetail('${post.id}')">
+          <i class="fa-solid fa-eye"></i> Details
+        </button>
+      `;
+    } else {
+      const hasDownload = post.downloadLink && post.downloadLink !== "#";
+      const dlLink = hasDownload ? post.downloadLink : "javascript:showToast('Downloading file has started... (Mock link)', 'success');";
+      
+      actionButtons = `
+        <a href="${dlLink}" class="btn btn-primary" ${hasDownload ? 'download' : ''}>
+          <i class="fa-solid fa-cloud-arrow-down"></i> ${hasDownload ? 'Download' : 'Download Now'}
+        </a>
+        ${post.link && post.link !== "#" ? `
+          <a href="${post.link}" target="_blank" class="btn btn-secondary" style="padding: 10px 14px;" title="Official Source">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        ` : ""}
+      `;
+    }
   }
 
   // Views counter eye element
@@ -1848,9 +1865,11 @@ function generateCardHTML(post) {
         ${specsHTML}
 
         <!-- Actions -->
-        <div class="card-actions">
-          ${actionButtons}
-        </div>
+        ${actionButtons ? `
+          <div class="card-actions">
+            ${actionButtons}
+          </div>
+        ` : ""}
       </div>
     </div>
   `;
