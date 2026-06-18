@@ -526,6 +526,9 @@ function applySettingsToUI() {
   setChk("settings-menu-privacy", siteSettings.showPrivacy);
   setChk("settings-menu-terms", siteSettings.showTerms);
   setChk("settings-menu-disclaimer", siteSettings.showDisclaimer);
+
+  // Add body class once settings are applied to fade in navigation links
+  document.body.classList.add("settings-applied");
 }
 
 // Save Settings Event Handler
