@@ -187,16 +187,11 @@ function initData() {
         posts.push(doc.data());
       });
       
-      // If db is completely empty, populate seed data
-      if (posts.length === 0 && typeof DEFAULT_POSTS !== "undefined") {
-        console.log("Database empty. Seeding default data to Firestore...");
-        uploadSeedData();
-      } else {
-        renderAllData();
-        renderAdminPostsTable();
-        if (typeof handleRouting === "function") {
-          handleRouting();
-        }
+      // Automatic database seeding disabled to keep categories clean
+      renderAllData();
+      renderAdminPostsTable();
+      if (typeof handleRouting === "function") {
+        handleRouting();
       }
     }, (error) => {
       console.error("Failed to read posts from Firestore:", error);
@@ -294,46 +289,16 @@ function loadLocalFallbackPosts() {
   const storedPosts = localStorage.getItem("laptop_tech_posts");
   if (storedPosts) {
     posts = JSON.parse(storedPosts);
-  } else if (typeof DEFAULT_POSTS !== "undefined") {
-    // Populate seeds locally
-    posts = DEFAULT_POSTS.map(p => {
-      let category = "repair-articles";
-      if (p.category === "online-shop") category = "store";
-      
-      const metadata = {};
-      if (category === "store") {
-        metadata.warranty = p.metadata?.warranty || "1 Year";
-        metadata.condition = p.metadata?.condition || "Brand New";
-        metadata.stock = p.metadata?.stock || "In Stock";
-      } else {
-        metadata.board = p.metadata?.motherboard || p.metadata?.boardModel || "N/A";
-        metadata.size = p.metadata?.biosSize || p.metadata?.fileSize || "N/A";
-        metadata.version = p.metadata?.version || "V1.0";
-      }
-
-      return {
-        id: p.id,
-        category: category,
-        title: p.title,
-        description: p.description,
-        image: p.image || "",
-        images: p.images || [p.image || ""],
-        link: p.link || "#",
-        downloadLink: p.downloadLink || "#",
-        price: p.price || "",
-        createdAt: p.createdAt || new Date().toISOString(),
-        views: Math.floor(Math.random() * 45) + 5,
-        metadata: metadata
-      };
-    });
+  } else {
+    posts = [];
     localStorage.setItem("laptop_tech_posts", JSON.stringify(posts));
   }
 
   const storedMessages = localStorage.getItem("laptop_tech_messages");
   if (storedMessages) {
     messages = JSON.parse(storedMessages);
-  } else if (typeof DEFAULT_MESSAGES !== "undefined") {
-    messages = [...DEFAULT_MESSAGES];
+  } else {
+    messages = [];
     localStorage.setItem("laptop_tech_messages", JSON.stringify(messages));
   }
   if (typeof handleRouting === "function") {
