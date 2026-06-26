@@ -19,6 +19,8 @@ let siteSettings = {
   techNewsLabel: "Tech News",
   repairArticlesLabel: "Repair Articles",
   storeLabel: "Store",
+  heroTitle: `Ultimate <span>Technician Hub</span> for Laptop Repair`,
+  heroDesc: "Verified BIOS dumps, boardviews, schematics, specialized flashing softwares, and high-quality diagnostics tools for professional laptop technicians.",
   email: "itsolutionslab23@gmail.com",
   phone: "+94742544138",
   youtubeUrl: "https://www.youtube.com/@itsolutionspro",
@@ -313,6 +315,12 @@ function applySettingsToUI() {
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", `Dynamic dashboard for ${siteSettings.siteName}.`);
 
+  // Update Homepage Hero Title & Description
+  const homeHeroTitle = document.getElementById("home-hero-title");
+  const homeHeroDesc = document.getElementById("home-hero-desc");
+  if (homeHeroTitle) homeHeroTitle.innerHTML = siteSettings.heroTitle || `Ultimate <span>Technician Hub</span> for Laptop Repair`;
+  if (homeHeroDesc) homeHeroDesc.innerText = siteSettings.heroDesc || "Verified BIOS dumps, boardviews, schematics, specialized flashing softwares, and high-quality diagnostics tools for professional laptop technicians.";
+
   // Update Website name branding and icons (Header)
   const headerIcon = document.getElementById("header-logo-icon");
   const headerText = document.getElementById("header-logo-text");
@@ -496,6 +504,8 @@ function applySettingsToUI() {
   const inLabelNews = document.getElementById("settings-label-news");
   const inLabelRepair = document.getElementById("settings-label-repair");
   const inLabelStore = document.getElementById("settings-label-store");
+  const inHeroTitle = document.getElementById("settings-hero-title");
+  const inHeroDesc = document.getElementById("settings-hero-desc");
   const inEmail = document.getElementById("settings-email");
   const inPhone = document.getElementById("settings-phone");
   const inYoutubeUrl = document.getElementById("settings-youtube-url");
@@ -511,6 +521,8 @@ function applySettingsToUI() {
   if (inLabelNews) inLabelNews.value = siteSettings.techNewsLabel;
   if (inLabelRepair) inLabelRepair.value = siteSettings.repairArticlesLabel;
   if (inLabelStore) inLabelStore.value = siteSettings.storeLabel;
+  if (inHeroTitle) inHeroTitle.value = siteSettings.heroTitle || "";
+  if (inHeroDesc) inHeroDesc.value = siteSettings.heroDesc || "";
   if (inEmail) inEmail.value = siteSettings.email;
   if (inPhone) inPhone.value = siteSettings.phone;
   if (inYoutubeUrl) inYoutubeUrl.value = siteSettings.youtubeUrl;
@@ -565,6 +577,8 @@ function setupAdminSettings() {
     const techNewsLabel = document.getElementById("settings-label-news").value.trim();
     const repairArticlesLabel = document.getElementById("settings-label-repair").value.trim();
     const storeLabel = document.getElementById("settings-label-store").value.trim();
+    const heroTitle = document.getElementById("settings-hero-title").value.trim();
+    const heroDesc = document.getElementById("settings-hero-desc").value.trim();
     const email = document.getElementById("settings-email").value.trim();
     const phone = document.getElementById("settings-phone").value.trim();
     const youtubeUrl = document.getElementById("settings-youtube-url").value.trim();
@@ -594,6 +608,8 @@ function setupAdminSettings() {
       techNewsLabel,
       repairArticlesLabel,
       storeLabel,
+      heroTitle,
+      heroDesc,
       email,
       phone,
       youtubeUrl,
