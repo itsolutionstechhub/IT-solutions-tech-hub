@@ -13,21 +13,21 @@ let activeDetailedPostId = null;
 
 // Global Site Settings State (Defaults populated before load)
 let siteSettings = {
-  siteName: "Laptop Tech Hub",
-  logoText: "TechHub",
+  siteName: "IT Solutions Pro",
+  logoText: "IT Solutions Pro",
   logoIcon: "fa-solid fa-microchip",
   techNewsLabel: "Tech News",
   repairArticlesLabel: "Repair Articles",
   storeLabel: "Store",
-  heroTitle: `Ultimate <span>Technician Hub</span> for Laptop Repair`,
-  heroDesc: "Verified BIOS dumps, boardviews, schematics, specialized flashing softwares, and high-quality diagnostics tools for professional laptop technicians.",
+  heroTitle: `<span>IT Solutions Pro</span> for Information Technology`,
+  heroDesc: "Empowering the public with information technology. IT Solutions Pro offers premium laptop repair resources, verified BIOS dumps, schematics, boardviews, and professional hardware diagnostics tools.",
   email: "itsolutionslab23@gmail.com",
   phone: "+94742544138",
   youtubeUrl: "https://www.youtube.com/@itsolutionspro",
   youtubeName: "IT Solutions Pro",
   youtubeDesc: "Sri Lanka's premium tech education brand! We teach motherboard level-3 chip repairing, laptop power sequence trace diagnostics, verified BIOS modifications, and expert troubleshooting workflows. Join thousands of technicians advancing their careers!",
-  aboutUs: `<h2>About Laptop Tech Hub</h2>
-  <p>Welcome to <strong>Laptop Tech Hub</strong>, the premium online repository and resource directory tailored specifically for motherboard repair engineers, electronics enthusiasts, and IT hardware technicians. Founded in 2026, our platform was engineered to address a persistent challenge in the laptop servicing industry: the lack of verified, clean, and well-organized bios files, motherboard layout schematics, and specialized flashing software utility tools.</p>
+  aboutUs: `<h2>About IT Solutions Pro</h2>
+  <p>Welcome to <strong>IT Solutions Pro</strong>, the premium online repository and resource directory tailored specifically for motherboard repair engineers, electronics enthusiasts, and IT hardware technicians. Founded in 2026, our platform was engineered to address a persistent challenge in the laptop servicing industry: the lack of verified, clean, and well-organized bios files, motherboard layout schematics, and specialized flashing software utility tools.</p>
   <h2>Our Core Mission</h2>
   <p>We are committed to empowering professional repair workshops and independent motherboard level-3 technicians globally. By providing a central, lightning-fast hub loaded with verified chip dumps, boardview files, and diagnostics systems, we help reduce troubleshooting times, optimize device lifecycle sustainability, and support green repair movements.</p>
   <h2>Why Choose Our Resources?</h2>
@@ -36,18 +36,18 @@ let siteSettings = {
     <li><strong>Organized & Searchable:</strong> Find files instantly by motherboard code, CPU platform architecture, or laptop model.</li>
     <li><strong>Expert Sourced:</strong> Our inventory items and tools are handpicked by experienced circuit board analysts.</li>
   </ul>`,
-  privacyPolicy: `<h2>Privacy Policy for Laptop Tech Hub</h2>
+  privacyPolicy: `<h2>Privacy Policy for IT Solutions Pro</h2>
   <p>Last updated: June 18, 2026</p>
-  <p>At Laptop Tech Hub, accessible from our portal, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Laptop Tech Hub and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>
+  <p>At IT Solutions Pro, accessible from our portal, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by IT Solutions Pro and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>
   
   <h2>Consent</h2>
   <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</p>
   
   <h2>Log Files</h2>
-  <p>Laptop Tech Hub follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this as part of hosting services' analytics. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
+  <p>IT Solutions Pro follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this as part of hosting services' analytics. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
   
   <h2>Cookies and Web Beacons</h2>
-  <p>Like any other website, Laptop Tech Hub uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+  <p>Like any other website, IT Solutions Pro uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
   
   <h2>Google DoubleClick DART Cookie</h2>
   <p>Google is one of the third-party vendors on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to our site and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" target="_blank" style="color: hsl(var(--primary)); text-decoration: underline;">https://policies.google.com/technologies/ads</a></p>
@@ -65,10 +65,10 @@ let siteSettings = {
   <p>We would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following: The right to access, the right to rectification, the right to erasure, the right to restrict processing, the right to object to processing, and the right to data portability.</p>`,
   termsConditions: `<h2>Terms & Conditions</h2>
   <p>Last updated: June 4, 2026</p>
-  <p>Welcome to Laptop Tech Hub! These terms and conditions outline the rules and regulations for the use of Laptop Tech Hub's Website.</p>
-  <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use Laptop Tech Hub if you do not agree to take all of the terms and conditions stated on this page.</p>
+  <p>Welcome to IT Solutions Pro! These terms and conditions outline the rules and regulations for the use of IT Solutions Pro's Website.</p>
+  <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use IT Solutions Pro if you do not agree to take all of the terms and conditions stated on this page.</p>
   <h2>License & File Sharing</h2>
-  <p>Unless otherwise stated, Laptop Tech Hub and/or its licensors own the intellectual property rights for all material, BIOS dumps, tools, and technical documents hosted on Laptop Tech Hub. All intellectual property rights are reserved. You may access this from Laptop Tech Hub for your own personal repair and training workshop use subjected to restrictions set in these terms and conditions.</p>
+  <p>Unless otherwise stated, IT Solutions Pro and/or its licensors own the intellectual property rights for all material, BIOS dumps, tools, and technical documents hosted on IT Solutions Pro. All intellectual property rights are reserved. You may access this from IT Solutions Pro for your own personal repair and training workshop use subjected to restrictions set in these terms and conditions.</p>
   <p>You must not:</p>
   <ul>
     <li>Republish binary BIOS dumps on competing commercial forums without attribution.</li>
@@ -78,8 +78,8 @@ let siteSettings = {
   disclaimer: `<h2>Legal Disclaimer</h2>
   <p>Last updated: June 4, 2026</p>
   <p>If you require any more information or have any questions about our site's disclaimer, please feel free to contact us by email.</p>
-  <h2>Disclaimers for Laptop Tech Hub</h2>
-  <p>All the information and downloadable assets on this website - softwares, bios dumps, motherboard schematics, repair equipment details - are published in good faith and for general educational, training, and professional repair purposes only. Laptop Tech Hub does not make any warranties about the completeness, reliability, and precision of these files. <strong>Any action you take upon the information you find on this website is strictly at your own risk.</strong></p>
+  <h2>Disclaimers for IT Solutions Pro</h2>
+  <p>All the information and downloadable assets on this website - softwares, bios dumps, motherboard schematics, repair equipment details - are published in good faith and for general educational, training, and professional repair purposes only. IT Solutions Pro does not make any warranties about the completeness, reliability, and precision of these files. <strong>Any action you take upon the information you find on this website is strictly at your own risk.</strong></p>
   <h2>Technical Warning</h2>
   <p style="border-left: 4px solid hsl(var(--danger)); padding-left: 16px; color: hsl(var(--text-primary)); font-weight: 500;">
     WARNING: Flashing incorrect, unverified, or incompatible BIOS bin files, or executing EC firmware modifications can permanently disable or damage hardware chips. Ensure you back up your motherboard's original chip data dump prior to performing any programming operations.
@@ -87,8 +87,8 @@ let siteSettings = {
   // Menu Link Toggles defaults
   showHome: true,
   showNews: true,
-  showRepair: true,
-  showStore: true,
+  showRepair: false,
+  showStore: false,
   showAdmin: true,
   showAbout: true,
   showContact: true,
@@ -783,7 +783,7 @@ function switchViewDirect(targetViewId) {
 
 // Dynamic SEO page title and description tags updates
 function updatePageSEOTitle(viewId, postTitle = null) {
-  const baseName = siteSettings.siteName || "Laptop Tech Hub";
+  const baseName = siteSettings.siteName || "IT Solutions Pro";
   
   if (postTitle) {
     document.title = `${postTitle} - ${baseName}`;

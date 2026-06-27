@@ -317,6 +317,10 @@ main {
   line-height: 1.1;
   margin-bottom: 18px;
   letter-spacing: -1.5px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: default;
 }
 
 .hero h1 span {
@@ -330,6 +334,10 @@ main {
   color: hsl(var(--text-secondary));
   max-width: 650px;
   margin: 0 auto 30px auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: default;
 }
 
 /* Search bar design */

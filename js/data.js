@@ -1,4 +1,4 @@
-// Default seed data for Laptop Tech Hub
+// Default seed data for IT Solutions Pro
 const DEFAULT_POSTS = [
   // Softwares
   {
