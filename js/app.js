@@ -94,7 +94,8 @@ let siteSettings = {
   showContact: true,
   showPrivacy: true,
   showTerms: true,
-  showDisclaimer: true
+  showDisclaimer: true,
+  showStatsCounters: true
 };
 
 // Firestore reference
@@ -325,7 +326,7 @@ function applySettingsToUI() {
   const headerIcon = document.getElementById("header-logo-icon");
   const headerText = document.getElementById("header-logo-text");
   if (headerIcon) headerIcon.className = siteSettings.logoIcon;
-  if (headerText) headerText.innerHTML = `${siteSettings.logoText}<span style="color:hsl(var(--primary));">.</span>`;
+  if (headerText) headerText.innerHTML = `${siteSettings.logoText}`;
 
   // Update Footer Branding
   const footerIcon = document.getElementById("footer-logo-icon");
@@ -334,7 +335,7 @@ function applySettingsToUI() {
   const footerCopy = document.getElementById("footer-copy-text");
 
   if (footerIcon) footerIcon.className = siteSettings.logoIcon;
-  if (footerText) footerText.innerHTML = `${siteSettings.logoText}<span style="color:hsl(var(--primary));">.</span>`;
+  if (footerText) footerText.innerHTML = `${siteSettings.logoText}`;
   if (footerDesc) footerDesc.innerText = `Premium online portal for ${siteSettings.siteName} resources.`;
   if (footerCopy) footerCopy.innerHTML = `&copy; 2026 ${siteSettings.siteName}. All intellectual rights reserved.`;
 
@@ -479,22 +480,27 @@ function applySettingsToUI() {
   }
 
   // Toggle Home view Statistics counter cards
+  const showStats = siteSettings.showStatsCounters !== false;
   const cNewsCard = document.getElementById("home-stat-news-card");
   const cRepairCard = document.getElementById("home-stat-repair-card");
   const cStoreCard = document.getElementById("home-stat-store-card");
-  if (cNewsCard) cNewsCard.style.display = showNews ? "block" : "none";
-  if (cRepairCard) cRepairCard.style.display = showRepair ? "block" : "none";
-  if (cStoreCard) cStoreCard.style.display = showStore ? "block" : "none";
+  if (cNewsCard) cNewsCard.style.display = (showStats && showNews) ? "block" : "none";
+  if (cRepairCard) cRepairCard.style.display = (showStats && showRepair) ? "block" : "none";
+  if (cStoreCard) cStoreCard.style.display = (showStats && showStore) ? "block" : "none";
 
   // Dynamic grid column balancing for counters
   const cluster = document.querySelector(".stats-cluster");
   if (cluster) {
-    const activeCount = [showNews, showRepair, showStore].filter(Boolean).length;
-    cluster.style.gridTemplateColumns = `repeat(${activeCount || 1}, 1fr)`;
-    cluster.style.display = activeCount === 0 ? "none" : "grid";
-    setTimeout(() => {
-      cluster.style.opacity = "1";
-    }, 50);
+    if (!showStats) {
+      cluster.style.display = "none";
+    } else {
+      const activeCount = [showNews, showRepair, showStore].filter(Boolean).length;
+      cluster.style.gridTemplateColumns = `repeat(${activeCount || 1}, 1fr)`;
+      cluster.style.display = activeCount === 0 ? "none" : "grid";
+      setTimeout(() => {
+        cluster.style.opacity = "1";
+      }, 50);
+    }
   }
 
   // Update settings inputs fields in admin settings form
@@ -547,6 +553,7 @@ function applySettingsToUI() {
   setChk("settings-menu-privacy", siteSettings.showPrivacy);
   setChk("settings-menu-terms", siteSettings.showTerms);
   setChk("settings-menu-disclaimer", siteSettings.showDisclaimer);
+  setChk("settings-show-counters", siteSettings.showStatsCounters);
 
   // Add body class once settings are applied to fade in navigation links
   document.body.classList.add("settings-applied");
@@ -599,6 +606,7 @@ function setupAdminSettings() {
     const showPrivacy = document.getElementById("settings-menu-privacy").checked;
     const showTerms = document.getElementById("settings-menu-terms").checked;
     const showDisclaimer = document.getElementById("settings-menu-disclaimer").checked;
+    const showStatsCounters = document.getElementById("settings-show-counters").checked;
 
     siteSettings = {
       ...siteSettings,
@@ -627,7 +635,8 @@ function setupAdminSettings() {
       showContact,
       showPrivacy,
       showTerms,
-      showDisclaimer
+      showDisclaimer,
+      showStatsCounters
     };
 
     if (isFirebaseActive) {
