@@ -296,6 +296,9 @@ main {
   padding: 40px 0 60px 0;
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .hero::before {
@@ -357,6 +360,9 @@ main {
   color: hsl(var(--text-primary));
   box-shadow: var(--shadow-sm);
   transition: var(--transition-normal);
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
 }
 
 .search-bar:focus {
