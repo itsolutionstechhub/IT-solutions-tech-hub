@@ -20,21 +20,21 @@ let siteSettings = {
   repairArticlesLabel: "Repair Articles",
   storeLabel: "Store",
   heroTitle: `<span>IT Solutions Pro</span> for Information Technology`,
-  heroDesc: "Empowering the public with information technology. IT Solutions Pro offers premium laptop repair resources, verified BIOS dumps, schematics, boardviews, and professional hardware diagnostics tools.",
+  heroDesc: "Empowering the public with information technology. IT Solutions Pro is your ultimate hub for premium tech news, software tools, computer maintenance tips, and professional hardware repair resources.",
   email: "itsolutionslab23@gmail.com",
   phone: "+94742544138",
   youtubeUrl: "https://www.youtube.com/@itsolutionspro",
   youtubeName: "IT Solutions Pro",
   youtubeDesc: "Sri Lanka's premium tech education brand! We teach motherboard level-3 chip repairing, laptop power sequence trace diagnostics, verified BIOS modifications, and expert troubleshooting workflows. Join thousands of technicians advancing their careers!",
   aboutUs: `<h2>About IT Solutions Pro</h2>
-  <p>Welcome to <strong>IT Solutions Pro</strong>, the premium online repository and resource directory tailored specifically for motherboard repair engineers, electronics enthusiasts, and IT hardware technicians. Founded in 2026, our platform was engineered to address a persistent challenge in the laptop servicing industry: the lack of verified, clean, and well-organized bios files, motherboard layout schematics, and specialized flashing software utility tools.</p>
+  <p>Welcome to <strong>IT Solutions Pro</strong>, your ultimate online hub for premium tech news, software tools, computer maintenance tips, and professional hardware repair resources. Founded in 2026, our platform was engineered to empower the public with information technology while providing technicians and electronics enthusiasts with verified chip-level files, schematics, and diagnostic documentation.</p>
   <h2>Our Core Mission</h2>
-  <p>We are committed to empowering professional repair workshops and independent motherboard level-3 technicians globally. By providing a central, lightning-fast hub loaded with verified chip dumps, boardview files, and diagnostics systems, we help reduce troubleshooting times, optimize device lifecycle sustainability, and support green repair movements.</p>
+  <p>We are committed to making technology accessible and understandable for everyone. Whether you are an everyday computer user looking to speed up your system, a software seeker looking for utility tools, or a chip-level motherboard repair engineer troubleshooting complex circuit boards, we provide the resources you need to succeed.</p>
   <h2>Why Choose Our Resources?</h2>
   <ul>
-    <li><strong>100% Tested Bin Dumps:</strong> Every single BIOS dump uploaded to our repository undergoes hardware test verification to ensure stable post validation and clean ME region state.</li>
-    <li><strong>Organized & Searchable:</strong> Find files instantly by motherboard code, CPU platform architecture, or laptop model.</li>
-    <li><strong>Expert Sourced:</strong> Our inventory items and tools are handpicked by experienced circuit board analysts.</li>
+    <li><strong>Verified Tech Guides:</strong> Our computer maintenance and performance optimization guides are written by hardware experts.</li>
+    <li><strong>Quality Software & Tools:</strong> We catalog and review essential software utilities and backup tools.</li>
+    <li><strong>Expert Diagnostics:</strong> Access clean motherboard BIOS dumps, schematics, and boardview files tested in active repair environments.</li>
   </ul>`,
   privacyPolicy: `<h2>Privacy Policy for IT Solutions Pro</h2>
   <p>Last updated: June 18, 2026</p>
@@ -68,18 +68,18 @@ let siteSettings = {
   <p>Welcome to IT Solutions Pro! These terms and conditions outline the rules and regulations for the use of IT Solutions Pro's Website.</p>
   <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use IT Solutions Pro if you do not agree to take all of the terms and conditions stated on this page.</p>
   <h2>License & File Sharing</h2>
-  <p>Unless otherwise stated, IT Solutions Pro and/or its licensors own the intellectual property rights for all material, BIOS dumps, tools, and technical documents hosted on IT Solutions Pro. All intellectual property rights are reserved. You may access this from IT Solutions Pro for your own personal repair and training workshop use subjected to restrictions set in these terms and conditions.</p>
+  <p>Unless otherwise stated, IT Solutions Pro and/or its licensors own the intellectual property rights for all material, tech articles, software tools, BIOS dumps, and technical documents hosted on IT Solutions Pro. All intellectual property rights are reserved. You may access this from IT Solutions Pro for your own personal repair and training workshop use subjected to restrictions set in these terms and conditions.</p>
   <p>You must not:</p>
   <ul>
-    <li>Republish binary BIOS dumps on competing commercial forums without attribution.</li>
-    <li>Sell, rent or sub-license schematic PDF diagrams acquired from this site.</li>
+    <li>Republish technical articles or binary BIOS dumps on competing commercial forums without attribution.</li>
+    <li>Sell, rent or sub-license schematic PDF diagrams or premium software utilities acquired from this site.</li>
     <li>Reproduce, duplicate or copy diagnostic software source files.</li>
   </ul>`,
   disclaimer: `<h2>Legal Disclaimer</h2>
   <p>Last updated: June 4, 2026</p>
   <p>If you require any more information or have any questions about our site's disclaimer, please feel free to contact us by email.</p>
   <h2>Disclaimers for IT Solutions Pro</h2>
-  <p>All the information and downloadable assets on this website - softwares, bios dumps, motherboard schematics, repair equipment details - are published in good faith and for general educational, training, and professional repair purposes only. IT Solutions Pro does not make any warranties about the completeness, reliability, and precision of these files. <strong>Any action you take upon the information you find on this website is strictly at your own risk.</strong></p>
+  <p>All the information and downloadable assets on this website - software tools, technical articles, computer maintenance tips, bios dumps, motherboard schematics - are published in good faith and for general educational, training, and professional repair purposes only. IT Solutions Pro does not make any warranties about the completeness, reliability, and precision of these files. <strong>Any action you take upon the information you find on this website is strictly at your own risk.</strong></p>
   <h2>Technical Warning</h2>
   <p style="border-left: 4px solid hsl(var(--danger)); padding-left: 16px; color: hsl(var(--text-primary)); font-weight: 500;">
     WARNING: Flashing incorrect, unverified, or incompatible BIOS bin files, or executing EC firmware modifications can permanently disable or damage hardware chips. Ensure you back up your motherboard's original chip data dump prior to performing any programming operations.
@@ -320,7 +320,7 @@ function applySettingsToUI() {
   const homeHeroTitle = document.getElementById("home-hero-title");
   const homeHeroDesc = document.getElementById("home-hero-desc");
   if (homeHeroTitle) homeHeroTitle.innerHTML = siteSettings.heroTitle || `Ultimate <span>Technician Hub</span> for Laptop Repair`;
-  if (homeHeroDesc) homeHeroDesc.innerText = siteSettings.heroDesc || "Verified BIOS dumps, boardviews, schematics, specialized flashing softwares, and high-quality diagnostics tools for professional laptop technicians.";
+  if (homeHeroDesc) homeHeroDesc.innerText = siteSettings.heroDesc || "Empowering the public with information technology. IT Solutions Pro is your ultimate hub for premium tech news, software tools, computer maintenance tips, and professional hardware repair resources.";
 
   // Update Website name branding and icons (Header)
   const headerIcon = document.getElementById("header-logo-icon");
