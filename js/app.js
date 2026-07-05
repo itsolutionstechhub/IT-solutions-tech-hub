@@ -804,7 +804,7 @@ function updatePageSEOTitle(viewId, postTitle = null) {
   let label = "";
   switch (viewId) {
     case "home":
-      label = "BIOS, Schematics & Software Resources";
+      label = "Tech News, Software & Repair Resources";
       break;
     case "tech-news":
       label = siteSettings.techNewsLabel || "Tech News";
