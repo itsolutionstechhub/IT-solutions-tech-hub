@@ -172,15 +172,12 @@ function initData() {
   if (isFirebaseActive) {
     // 1. Listen to Site Settings
     db.collection("settings").doc("site").onSnapshot((doc) => {
-      if (doc.exists) {
-        siteSettings = { ...siteSettings, ...doc.data() };
-      } else {
-        // Create initial settings document
-        db.collection("settings").doc("site").set(siteSettings);
-      }
+      // NOTE: Hardcoded fallback settings applied to avoid layout resets before AdSense approval.
+      // siteSettings = { ...siteSettings, ...doc.data() };
       applySettingsToUI();
     }, (error) => {
       console.error("Failed to read settings from Firestore:", error);
+      applySettingsToUI();
     });
 
     // 2. Listen to Posts (Realtime updates)
