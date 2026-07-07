@@ -105,6 +105,20 @@ let isFirebaseActive = false;
 // Auto carousel sliding interval variable
 let autoCarouselInterval = null;
 
+// Automatically optimizes Cloudinary/Unsplash image URLs on the fly
+function optimizeImageUrl(url) {
+  if (!url) return url;
+  if (url.includes("res.cloudinary.com") && url.includes("/image/upload/")) {
+    if (!url.includes("/f_auto,q_auto/")) {
+      return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
+    }
+  }
+  if (url.includes("images.unsplash.com") && !url.includes("&fm=")) {
+    return url + "&fm=webp&q=80";
+  }
+  return url;
+}
+
 // Initialize Application
 document.addEventListener("DOMContentLoaded", () => {
   initFirebase();
@@ -1344,7 +1358,7 @@ function renderAdminPostsTable(filterQuery = "") {
     tr.innerHTML = `
       <td>
         <div class="admin-table-item">
-          <img src="${post.image}" class="admin-table-thumb" alt="thumb">
+          <img src="${optimizeImageUrl(post.image)}" class="admin-table-thumb" alt="thumb">
           <div style="overflow:hidden;">
             <div class="admin-table-name" title="${post.title}">${post.title}</div>
             <div style="font-size: 11px; color: hsl(var(--text-muted)); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -1675,7 +1689,7 @@ window.viewPostDetailDirect = function(postId) {
   if (mediaContainer) {
     mediaContainer.innerHTML = "";
     if (post.images && Array.isArray(post.images) && post.images.length > 1) {
-      const slides = post.images.map(img => `<img src="${img}" alt="slide" loading="lazy">`).join("");
+      const slides = post.images.map(img => `<img src="${optimizeImageUrl(img)}" alt="slide" loading="lazy">`).join("");
       const dots = post.images.map((_, idx) => `<span class="carousel-dot ${idx === 0 ? 'active' : ''}" onclick="setCarouselSlide(this, ${idx})"></span>`).join("");
       
       mediaContainer.innerHTML = `
@@ -1695,7 +1709,7 @@ window.viewPostDetailDirect = function(postId) {
         </div>
       `;
     } else {
-      mediaContainer.innerHTML = `<img src="${post.image || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'}" style="width: 100%; height: 100%; object-fit: cover;" alt="cover">`;
+      mediaContainer.innerHTML = `<img src="${optimizeImageUrl(post.image) || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'}" style="width: 100%; height: 100%; object-fit: cover;" alt="cover">`;
     }
   }
 
@@ -1881,7 +1895,7 @@ function checkGridEmptyState(gridEl, icon, msg) {
 function generateCardHTML(post) {
   let mediaHTML = "";
   if (post.images && Array.isArray(post.images) && post.images.length > 1) {
-    const imagesHTML = post.images.map(img => `<img src="${img}" class="card-img" alt="cover" loading="lazy">`).join("");
+    const imagesHTML = post.images.map(img => `<img src="${optimizeImageUrl(img)}" class="card-img" alt="cover" loading="lazy">`).join("");
     const dotsHTML = post.images.map((_, idx) => `<span class="carousel-dot ${idx === 0 ? "active" : ""}" onclick="setCarouselSlide(this, ${idx})"></span>`).join("");
     
     mediaHTML = `
@@ -1901,7 +1915,7 @@ function generateCardHTML(post) {
       </div>
     `;
   } else {
-    mediaHTML = `<img src="${post.image || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'}" class="card-img" alt="cover" loading="lazy">`;
+    mediaHTML = `<img src="${optimizeImageUrl(post.image) || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'}" class="card-img" alt="cover" loading="lazy">`;
   }
   
   let badgeClass = getBadgeClass(post.category);
