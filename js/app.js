@@ -104,6 +104,7 @@ let isFirebaseActive = false;
 
 // Auto carousel sliding interval variable
 let autoCarouselInterval = null;
+let recentPostsPage = 0;
 
 // Automatically optimizes Cloudinary/Unsplash image URLs on the fly
 function optimizeImageUrl(url) {
@@ -1827,11 +1828,19 @@ function renderAllData() {
   if (repairGrid) repairGrid.innerHTML = "";
   if (storeGrid) storeGrid.innerHTML = "";
 
+  const postsPerPage = 6;
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+  if (recentPostsPage < 0) recentPostsPage = 0;
+  if (recentPostsPage >= totalPages && totalPages > 0) recentPostsPage = totalPages - 1;
+
+  const startIdx = recentPostsPage * postsPerPage;
+  const endIdx = startIdx + postsPerPage;
+
   posts.forEach((post, i) => {
     const cardHTML = generateCardHTML(post);
     
-    // Add to home (top 6 items)
-    if (i < 6) {
+    // Add to home if it falls within the current page's slice
+    if (i >= startIdx && i < endIdx) {
       recentGrid.insertAdjacentHTML("beforeend", cardHTML);
     }
 
@@ -1845,11 +1854,45 @@ function renderAllData() {
     }
   });
 
+  // Render recent posts pagination controls
+  const paginationContainer = document.getElementById("recent-posts-pagination");
+  if (paginationContainer) {
+    if (totalPages > 1) {
+      const prevDisabled = recentPostsPage === 0 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
+      const nextDisabled = recentPostsPage === totalPages - 1 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
+      
+      paginationContainer.innerHTML = `
+        <button class="btn btn-secondary" onclick="changeRecentPostsPage(-1)" ${prevDisabled}>
+          <i class="fa-solid fa-chevron-left"></i> Previous
+        </button>
+        <span style="font-size: 14px; font-weight: 500; color: hsl(var(--text-secondary));">
+          Page ${recentPostsPage + 1} of ${totalPages}
+        </span>
+        <button class="btn btn-secondary" onclick="changeRecentPostsPage(1)" ${nextDisabled}>
+          Next <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      `;
+      paginationContainer.style.display = "flex";
+    } else {
+      paginationContainer.innerHTML = "";
+      paginationContainer.style.display = "none";
+    }
+  }
+
   // Empty lists feedback check
   if (newsGrid) checkGridEmptyState(newsGrid, "newspaper", `No ${siteSettings.techNewsLabel} uploaded yet.`);
   if (repairGrid) checkGridEmptyState(repairGrid, "screwdriver-wrench", `No ${siteSettings.repairArticlesLabel} uploaded yet.`);
   if (storeGrid) checkGridEmptyState(storeGrid, "store", `No ${siteSettings.storeLabel} items listed yet.`);
 }
+
+window.changeRecentPostsPage = function(delta) {
+  recentPostsPage += delta;
+  renderAllData();
+  const sectionHeader = document.querySelector("#view-home .section-header");
+  if (sectionHeader) {
+    sectionHeader.scrollIntoView({ behavior: "smooth" });
+  }
+};
 
 function updateGlobalCounters() {
   const newsCount = posts.filter(p => p.category === "tech-news").length;
