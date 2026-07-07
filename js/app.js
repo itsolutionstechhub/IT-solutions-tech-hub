@@ -89,13 +89,13 @@ let siteSettings = {
   showNews: true,
   showRepair: false,
   showStore: false,
-  showAdmin: true,
+  showAdmin: false,
   showAbout: true,
   showContact: true,
   showPrivacy: true,
   showTerms: true,
   showDisclaimer: true,
-  showStatsCounters: true
+  showStatsCounters: false
 };
 
 // Firestore reference
