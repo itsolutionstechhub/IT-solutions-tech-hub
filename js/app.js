@@ -2128,6 +2128,9 @@ function generateCardHTML(post) {
         ${mediaHTML}
         ${badgeHTML}
         ${priceHTML}
+        <div class="card-image-watermark" style="position: absolute; bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); color: hsl(var(--primary)); padding: 6px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15); width: 24px; height: 24px; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
       </div>
       <div class="card-content">
         <h3 class="card-title">${post.title}</h3>
