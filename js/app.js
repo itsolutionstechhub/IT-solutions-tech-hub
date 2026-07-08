@@ -105,6 +105,7 @@ let isFirebaseActive = false;
 // Auto carousel sliding interval variable
 let autoCarouselInterval = null;
 let recentPostsPage = 0;
+let techNewsPage = 0;
 
 // Automatically optimizes Cloudinary/Unsplash image URLs on the fly
 function optimizeImageUrl(url) {
@@ -118,6 +119,12 @@ function optimizeImageUrl(url) {
     return url + "&fm=webp&q=80";
   }
   return url;
+}
+
+// Strips HTML tags from description for clean snippet display
+function stripHtml(html) {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "");
 }
 
 // Initialize Application
@@ -1684,7 +1691,7 @@ window.viewPostDetailDirect = function(postId) {
 
   if (viewsEl) viewsEl.innerText = nextViews;
 
-  if (descEl) descEl.innerText = post.description;
+  if (descEl) descEl.innerHTML = post.description;
 
   // Render Slider / Image Gallery
   if (mediaContainer) {
@@ -1829,44 +1836,61 @@ function renderAllData() {
   if (storeGrid) storeGrid.innerHTML = "";
 
   const postsPerPage = 6;
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  // 1. Render Homepage Grid (Recent Posts)
+  const recentTotalPages = Math.ceil(posts.length / postsPerPage);
   if (recentPostsPage < 0) recentPostsPage = 0;
-  if (recentPostsPage >= totalPages && totalPages > 0) recentPostsPage = totalPages - 1;
+  if (recentPostsPage >= recentTotalPages && recentTotalPages > 0) recentPostsPage = recentTotalPages - 1;
 
-  const startIdx = recentPostsPage * postsPerPage;
-  const endIdx = startIdx + postsPerPage;
-
-  posts.forEach((post, i) => {
-    const cardHTML = generateCardHTML(post);
-    
-    // Add to home if it falls within the current page's slice
-    if (i >= startIdx && i < endIdx) {
-      recentGrid.insertAdjacentHTML("beforeend", cardHTML);
-    }
-
-    // Add to category feeds
-    if (post.category === "tech-news" && newsGrid) {
-      newsGrid.insertAdjacentHTML("beforeend", cardHTML);
-    } else if (post.category === "repair-articles" && repairGrid) {
-      repairGrid.insertAdjacentHTML("beforeend", cardHTML);
-    } else if (post.category === "store" && storeGrid) {
-      storeGrid.insertAdjacentHTML("beforeend", cardHTML);
-    }
+  const recentStartIdx = recentPostsPage * postsPerPage;
+  const recentEndIdx = recentStartIdx + postsPerPage;
+  posts.slice(recentStartIdx, recentEndIdx).forEach(post => {
+    recentGrid.insertAdjacentHTML("beforeend", generateCardHTML(post));
   });
+
+  // 2. Render Tech News Grid (Paginated)
+  const techNewsPosts = posts.filter(p => p.category === "tech-news");
+  const newsTotalPages = Math.ceil(techNewsPosts.length / postsPerPage);
+  if (techNewsPage < 0) techNewsPage = 0;
+  if (techNewsPage >= newsTotalPages && newsTotalPages > 0) techNewsPage = newsTotalPages - 1;
+
+  const newsStartIdx = techNewsPage * postsPerPage;
+  const newsEndIdx = newsStartIdx + postsPerPage;
+  if (newsGrid) {
+    techNewsPosts.slice(newsStartIdx, newsEndIdx).forEach(post => {
+      newsGrid.insertAdjacentHTML("beforeend", generateCardHTML(post));
+    });
+  }
+
+  // 3. Render Repair Grid
+  const repairPosts = posts.filter(p => p.category === "repair-articles");
+  if (repairGrid) {
+    repairPosts.forEach(post => {
+      repairGrid.insertAdjacentHTML("beforeend", generateCardHTML(post));
+    });
+  }
+
+  // 4. Render Store Grid
+  const storePosts = posts.filter(p => p.category === "store");
+  if (storeGrid) {
+    storePosts.forEach(post => {
+      storeGrid.insertAdjacentHTML("beforeend", generateCardHTML(post));
+    });
+  }
 
   // Render recent posts pagination controls
   const paginationContainer = document.getElementById("recent-posts-pagination");
   if (paginationContainer) {
-    if (totalPages > 1) {
+    if (recentTotalPages > 1) {
       const prevDisabled = recentPostsPage === 0 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
-      const nextDisabled = recentPostsPage === totalPages - 1 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
+      const nextDisabled = recentPostsPage === recentTotalPages - 1 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
       
       paginationContainer.innerHTML = `
         <button class="btn btn-secondary" onclick="changeRecentPostsPage(-1)" ${prevDisabled}>
           <i class="fa-solid fa-chevron-left"></i> Previous
         </button>
         <span style="font-size: 14px; font-weight: 500; color: hsl(var(--text-secondary));">
-          Page ${recentPostsPage + 1} of ${totalPages}
+          Page ${recentPostsPage + 1} of ${recentTotalPages}
         </span>
         <button class="btn btn-secondary" onclick="changeRecentPostsPage(1)" ${nextDisabled}>
           Next <i class="fa-solid fa-chevron-right"></i>
@@ -1876,6 +1900,31 @@ function renderAllData() {
     } else {
       paginationContainer.innerHTML = "";
       paginationContainer.style.display = "none";
+    }
+  }
+
+  // Render tech news pagination controls
+  const newsPaginationContainer = document.getElementById("tech-news-pagination");
+  if (newsPaginationContainer) {
+    if (newsTotalPages > 1) {
+      const prevDisabled = techNewsPage === 0 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
+      const nextDisabled = techNewsPage === newsTotalPages - 1 ? "disabled style='opacity: 0.5; pointer-events: none;'" : "";
+      
+      newsPaginationContainer.innerHTML = `
+        <button class="btn btn-secondary" onclick="changeTechNewsPage(-1)" ${prevDisabled}>
+          <i class="fa-solid fa-chevron-left"></i> Previous
+        </button>
+        <span style="font-size: 14px; font-weight: 500; color: hsl(var(--text-secondary));">
+          Page ${techNewsPage + 1} of ${newsTotalPages}
+        </span>
+        <button class="btn btn-secondary" onclick="changeTechNewsPage(1)" ${nextDisabled}>
+          Next <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      `;
+      newsPaginationContainer.style.display = "flex";
+    } else {
+      newsPaginationContainer.innerHTML = "";
+      newsPaginationContainer.style.display = "none";
     }
   }
 
@@ -1889,6 +1938,15 @@ window.changeRecentPostsPage = function(delta) {
   recentPostsPage += delta;
   renderAllData();
   const sectionHeader = document.querySelector("#view-home .section-header");
+  if (sectionHeader) {
+    sectionHeader.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
+window.changeTechNewsPage = function(delta) {
+  techNewsPage += delta;
+  renderAllData();
+  const sectionHeader = document.querySelector("#view-tech-news .section-header");
   if (sectionHeader) {
     sectionHeader.scrollIntoView({ behavior: "smooth" });
   }
@@ -2073,7 +2131,7 @@ function generateCardHTML(post) {
       </div>
       <div class="card-content">
         <h3 class="card-title">${post.title}</h3>
-        <p class="card-description" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-height: 4.8em; line-height: 1.6; margin-bottom: 12px;">${post.description}</p>
+        <p class="card-description" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-height: 4.8em; line-height: 1.6; margin-bottom: 12px;">${stripHtml(post.description)}</p>
         
         ${viewsHTML}
         ${toggleBtnHTML}
