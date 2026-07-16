@@ -8,43 +8,43 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#home</loc>
+    <loc>https://itsolutionspro.net/home</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#tech-news</loc>
+    <loc>https://itsolutionspro.net/tech-news</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#about-us</loc>
+    <loc>https://itsolutionspro.net/about-us</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#contact-us</loc>
+    <loc>https://itsolutionspro.net/contact-us</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#privacy-policy</loc>
+    <loc>https://itsolutionspro.net/privacy-policy</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#terms-conditions</loc>
+    <loc>https://itsolutionspro.net/terms-conditions</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#disclaimer</loc>
+    <loc>https://itsolutionspro.net/disclaimer</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -52,109 +52,109 @@
 
   <!-- Dynamic Post Pages -->
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783219214809</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783219214809/laptop-battery-life-battery-health-myths</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783246700401</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783246700401/how-to-speed-up-your-computer-or-laptop</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783319269832</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783319269832/what-is-the-microsoft-365</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783335774954</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783335774954/getting-rid-of-onboard-ram-by-using-the-bios-spd-removal-tool</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783401816473</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783401816473/bios-introduction-bios-update</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783413422774</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783413422774/ssd-solid-state-drive-ssd-update</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783414100828</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783414100828/best-computer-monitor</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783494239423</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783494239423/what-is-the-microsoft-windows</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783500304762</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783500304762/future-data-backup-technology</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783594981368</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783594981368/introduction-to-laptop-ram-cards</loc>
     <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783595604542</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783595604542/solutions-to-fix-canon-printer-error-b520</loc>
     <lastmod>2026-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783696688433</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783696688433/kaspersky-smart-security</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783698842244</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783698842244/what-is-firewall-security</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783760898346</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783760898346/laptop-ic-equivalent-richtek-marking</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783762803121</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783762803121/hp-and-dell-laptop-charger-adapter-id</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1783910650358</loc>
+    <loc>https://itsolutionspro.net/posts/post-1783910650358/smart-home-devices-of-the-future</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1784001604386</loc>
+    <loc>https://itsolutionspro.net/posts/post-1784001604386/gpu-graphics-processing-unit</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://itsolutionspro.net/#post-detail?id=post-1784088634116</loc>
+    <loc>https://itsolutionspro.net/posts/post-1784088634116/data-protection-systems-backup</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

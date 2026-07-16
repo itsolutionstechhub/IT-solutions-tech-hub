@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAllData();
   startAutoCarouselLoop();
 
-  // Listen to URL hash changes
-  window.addEventListener("hashchange", handleRouting);
+  // Listen to URL state changes for clean paths routing
+  window.addEventListener("popstate", handleRouting);
   // Route to the starting view on initial load
   handleRouting();
 
@@ -578,14 +578,16 @@ function applySettingsToUI() {
   document.body.classList.add("settings-applied");
   
   // Re-assert correct SEO title based on active view
-  const currentHash = window.location.hash || "#home";
-  if (currentHash.startsWith("#post-detail")) {
+  const currentPath = window.location.pathname || "/";
+  if (currentPath.startsWith("/posts/")) {
     if (activeDetailedPostId) {
       const post = posts.find(p => p.id === activeDetailedPostId);
       if (post) updatePageSEOTitle("post-detail", post.title);
     }
   } else {
-    updatePageSEOTitle(currentHash.replace("#", ""));
+    let target = currentPath === "/" ? "home" : currentPath.replace("/", "");
+    if (!target) target = "home";
+    updatePageSEOTitle(target);
   }
 }
 
@@ -688,29 +690,30 @@ function setupSPARouter() {
   // Intercept nav link clicks with authentication check for admin
   navLinks.forEach(link => {
     link.addEventListener("click", (e) => {
+      e.preventDefault();
       const target = link.getAttribute("data-target");
       if (target === "admin" && sessionStorage.getItem("isAdminAuthenticated") !== "true") {
-        e.preventDefault();
         authModal.classList.add("active");
         authPasscode.focus();
         return;
       }
-      window.location.hash = target;
+      window.navigateToView(target);
     });
   });
 
   // Footer link clicks
   footerLinks.forEach(link => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
       const target = link.getAttribute("data-target");
-      window.location.hash = target;
+      window.navigateToView(target);
     });
   });
 
   // Logo click
   logoBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    window.location.hash = "home";
+    window.navigateToView("home");
   });
 
   // Mobile menu hamburger toggle
@@ -724,40 +727,58 @@ function setupSPARouter() {
     card.addEventListener("click", () => {
       const target = card.getAttribute("data-target");
       if (target) {
-        window.location.hash = target;
+        window.navigateToView(target);
       }
     });
   });
 
-  // Expose router function globally
+  // Expose router function globally using HTML5 history API
   window.navigateToView = (targetViewId) => {
-    window.location.hash = targetViewId;
+    const path = targetViewId === "home" ? "/" : `/${targetViewId}`;
+    window.history.pushState({}, "", path);
+    handleRouting();
   };
 }
 
-// Router Event Handler triggered on hashchange and DOM load
+// URL Slug generator for SEO friendly paths
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove special chars
+    .replace(/\s+/g, "-")         // Replace spaces with dash
+    .replace(/-+/g, "-")          // Replace multiple dashes with single dash
+    .trim();
+}
+
+// Router Event Handler triggered on popstate and DOM load
 function handleRouting() {
-  const hash = window.location.hash || "#home";
+  const path = window.location.pathname || "/";
   
-  if (hash.startsWith("#post-detail")) {
-    const queryIndex = hash.indexOf("?");
-    if (queryIndex !== -1) {
-      const params = new URLSearchParams(hash.substring(queryIndex));
-      const postId = params.get("id");
-      if (postId) {
-        if (posts && posts.length > 0) {
-          window.viewPostDetailDirect(postId);
-        }
-        return;
+  if (path.startsWith("/posts/")) {
+    const parts = path.replace("/posts/", "").split("/");
+    const postId = parts[0];
+    if (postId) {
+      if (posts && posts.length > 0) {
+        window.viewPostDetailDirect(postId);
+      } else {
+        // Fallback: If posts array is not yet loaded, wait and try again or use LOCAL_POSTS
+        const checkInterval = setInterval(() => {
+          if (posts && posts.length > 0) {
+            clearInterval(checkInterval);
+            window.viewPostDetailDirect(postId);
+          }
+        }, 100);
       }
+      return;
     }
   }
 
-  const targetViewId = hash.replace("#", "");
+  let targetViewId = path === "/" ? "home" : path.replace("/", "");
+  if (!targetViewId) targetViewId = "home";
   
   // Guard admin view with auth
   if (targetViewId === "admin" && sessionStorage.getItem("isAdminAuthenticated") !== "true") {
-    window.location.hash = "home";
+    window.history.replaceState({}, "", "/");
     const authModal = document.getElementById("admin-auth-modal");
     const authPasscode = document.getElementById("auth-passcode");
     if (authModal && authPasscode) {
@@ -771,7 +792,8 @@ function handleRouting() {
   if (targetSection) {
     switchViewDirect(targetViewId);
   } else {
-    window.location.hash = "home";
+    window.history.replaceState({}, "", "/");
+    switchViewDirect("home");
   }
 }
 
@@ -1613,16 +1635,48 @@ function setupDetailViewBackBtn() {
   }
 }
 
-// Detailed page view router helper
-// Detailed page view router helper (triggers hash change)
+// Detailed page view router helper (triggers path change with SEO slug suffix)
 window.viewPostDetail = function(postId) {
-  window.location.hash = `post-detail?id=${postId}`;
+  const post = posts.find(p => p.id === postId);
+  const slug = post ? generateSlug(post.title) : "";
+  const path = slug ? `/posts/${postId}/${slug}` : `/posts/${postId}`;
+  window.history.pushState({}, "", path);
+  handleRouting();
 };
 
 // Actual layout renderer and view selector for post detail
 window.viewPostDetailDirect = function(postId) {
   const post = posts.find(p => p.id === postId);
   if (!post) return;
+
+  // Dynamic SEO & Metadata injection
+  // 1. Dynamic Canonical URL
+  let canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (!canonicalLink) {
+    canonicalLink = document.createElement('link');
+    canonicalLink.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonicalLink);
+  }
+  canonicalLink.setAttribute('href', window.location.href);
+
+  // 2. Dynamic Open Graph Tags
+  function setOGTag(property, content) {
+    let tag = document.querySelector(`meta[property="${property}"]`);
+    if (!tag) {
+      tag = document.createElement('meta');
+      tag.setAttribute('property', property);
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute('content', content);
+  }
+
+  setOGTag("og:title", post.title);
+  // Strip HTML tags for clean description text
+  const cleanDesc = post.description.replace(/<[^>]*>/g, '').substring(0, 150) + "...";
+  setOGTag("og:description", cleanDesc);
+  setOGTag("og:url", window.location.href);
+  setOGTag("og:type", "article");
+  setOGTag("og:image", post.image || "");
 
   const isAlreadyViewing = (activeDetailedPostId === postId);
   activeDetailedPostId = postId; // Store current postId globally
