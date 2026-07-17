@@ -35,16 +35,7 @@ export default function Header() {
               {settings.techNewsLabel || "Tech News"}
             </Link>
           )}
-          {settings.showRepair !== false && (
-            <Link href="/repair-articles" className={`nav-link ${isActive('/repair-articles')}`} onClick={() => setMenuOpen(false)}>
-              {settings.repairArticlesLabel || "Repair Articles"}
-            </Link>
-          )}
-          {settings.showStore !== false && (
-            <Link href="/store" className={`nav-link ${isActive('/store')}`} onClick={() => setMenuOpen(false)}>
-              {settings.storeLabel || "Store"}
-            </Link>
-          )}
+
           {settings.showAbout !== false && (
             <Link href="/about-us" className={`nav-link ${isActive('/about-us')}`} onClick={() => setMenuOpen(false)}>
               About Us
