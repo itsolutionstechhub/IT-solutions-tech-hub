@@ -1766,20 +1766,10 @@ footer {
 
 /* Prevent FOUC (Flash of Unstyled Content) on navigation menu options */
 #navbar,
-#admin-trigger-btn,
 #footer-col-quick-links,
 #footer-col-about-links,
 .footer-bottom-links {
-  opacity: 0;
-  transition: opacity 0.25s ease-in-out;
-}
-
-body.settings-applied #navbar,
-body.settings-applied #admin-trigger-btn,
-body.settings-applied #footer-col-quick-links,
-body.settings-applied #footer-col-about-links,
-body.settings-applied .footer-bottom-links {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 /* --- COOKIE CONSENT BANNER --- */

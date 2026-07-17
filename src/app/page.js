@@ -94,41 +94,6 @@ export default function Home() {
           <i className="fa-solid fa-magnifying-glass"></i>
         </div>
       </div>
-
-      {/* Stats Counter Cards */}
-      {showStats && activeStatsCount > 0 && (
-        <div 
-          className="stats-cluster" 
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: `repeat(${activeStatsCount}, 1fr)`,
-            opacity: 1 
-          }}
-        >
-          {showNews && (
-            <div className="stat-card" onClick={() => handleStatCardClick('tech-news')}>
-              <i className="fa-solid fa-newspaper"></i>
-              <div className="stat-val" id="stat-count-news">{newsCount}</div>
-              <div className="stat-lbl" id="lbl-news-count">{settings.techNewsLabel || "Tech News"}</div>
-            </div>
-          )}
-          {showRepair && (
-            <div className="stat-card" onClick={() => handleStatCardClick('repair-articles')}>
-              <i className="fa-solid fa-screwdriver-wrench"></i>
-              <div className="stat-val" id="stat-count-repair">{repairCount}</div>
-              <div className="stat-lbl" id="lbl-repair-count">{settings.repairArticlesLabel || "Repair Articles"}</div>
-            </div>
-          )}
-          {showStore && (
-            <div className="stat-card" onClick={() => handleStatCardClick('store')}>
-              <i className="fa-solid fa-store"></i>
-              <div className="stat-val" id="stat-count-store">{storeCount}</div>
-              <div className="stat-lbl" id="lbl-store-count">{settings.storeLabel || "Store"}</div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Main Grid Title */}
       <div className="section-header" id="recent-resources-title" style={{ marginTop: '40px' }}>
         <h2 className="section-title">Recently Added Resources</h2>
