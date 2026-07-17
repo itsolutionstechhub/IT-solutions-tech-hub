@@ -1,0 +1,2 @@
+This file ensures the public/images/posts folder structure is uploaded to GitHub.
+It can be safely deleted or ignored.

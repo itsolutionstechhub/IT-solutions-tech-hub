@@ -1,0 +1,2 @@
+This file is here to ensure the public directory and its structure are uploaded to GitHub.
+You can delete this file later once you start uploading your own image assets via the Admin panel.
