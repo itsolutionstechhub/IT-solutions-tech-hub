@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import settings from '../../content/settings.json';
 
 // Helper to strip HTML tags for card description snippets
@@ -99,10 +100,12 @@ export default function PostCard({ post }) {
           <div className="card-carousel" data-active-slide={activeSlide}>
             <div 
               className="carousel-track" 
-              style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+              style={{ display: 'flex', width: '100%', height: '100%', transform: `translateX(-${activeSlide * 100}%)` }}
             >
               {post.images.map((img, idx) => (
-                <img key={idx} src={img} className="card-img" alt="cover" loading="lazy" />
+                <div key={idx} style={{ position: 'relative', width: '100%', height: '100%', flexShrink: 0 }}>
+                  <Image src={img} alt="cover" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
+                </div>
               ))}
             </div>
             <button type="button" className="carousel-btn btn-prev" onClick={handlePrev}>
@@ -122,7 +125,7 @@ export default function PostCard({ post }) {
             </div>
           </div>
         ) : (
-          <img src={post.image || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'} className="card-img" alt="cover" loading="lazy" />
+          <Image src={post.image || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'} alt="cover" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
         )}
         
         <span className={`card-badge badge-${badgeClass}`}>{displayCategory}</span>

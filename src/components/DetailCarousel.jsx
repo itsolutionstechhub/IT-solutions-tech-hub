@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
+import Image from 'next/image';
+
 export default function DetailCarousel({ images, coverImage }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const isHovered = useRef(false);
@@ -32,11 +34,16 @@ export default function DetailCarousel({ images, coverImage }) {
 
   if (!hasMultipleImages) {
     return (
-      <img 
-        src={coverImage || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'} 
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-        alt="cover" 
-      />
+      <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '350px' }}>
+        <Image 
+          src={coverImage || 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80'} 
+          fill
+          sizes="(max-width: 1200px) 100vw, 800px"
+          style={{ objectFit: 'cover' }} 
+          alt="cover" 
+          priority
+        />
+      </div>
     );
   }
 
@@ -59,13 +66,16 @@ export default function DetailCarousel({ images, coverImage }) {
         }}
       >
         {images.map((img, idx) => (
-          <img 
-            key={idx} 
-            src={img} 
-            alt="slide" 
-            loading="lazy" 
-            style={{ width: '100%', height: '480px', objectFit: 'cover', flexShrink: 0 }}
-          />
+          <div key={idx} style={{ position: 'relative', width: '100%', height: '480px', flexShrink: 0 }}>
+            <Image 
+              src={img} 
+              alt="slide" 
+              fill
+              sizes="(max-width: 1200px) 100vw, 800px"
+              style={{ objectFit: 'cover' }} 
+              priority={idx === 0}
+            />
+          </div>
         ))}
       </div>
       <button type="button" className="carousel-btn btn-prev" onClick={handlePrev}>

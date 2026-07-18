@@ -5,6 +5,47 @@ import { useRouter } from 'next/navigation';
 import settings from '../../../content/settings.json';
 import initialPosts from '../../../content/posts.json';
 
+// Helper function to compress and resize image on the client-side
+const compressImage = (file, maxWidth, maxHeight, quality) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Export as JPEG with the specified quality compression
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 export default function AdminPortal() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -108,7 +149,7 @@ export default function AdminPortal() {
     setImageSlots(nextSlots);
   };
 
-  // Process Local File to Base64
+  // Process Local File to Base64 with client-side compression
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -119,21 +160,22 @@ export default function AdminPortal() {
     }
 
     setIsUploading(true);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const nextSlots = [...imageSlots];
-      nextSlots[activeSlot] = event.target.result;
-      setImageSlots(nextSlots);
-      setIsUploading(false);
-      if (window.showToast) {
-        window.showToast(`Image loaded to slot ${activeSlot + 1}. Will commit to GitHub on save.`, 'success');
-      }
-    };
-    reader.onerror = () => {
-      setIsUploading(false);
-      if (window.showToast) window.showToast('Failed to load local file.', 'danger');
-    };
-    reader.readAsDataURL(file);
+    // Compress to maximum width 1000px, max height 1000px, quality 0.7
+    compressImage(file, 1000, 1000, 0.7)
+      .then((compressedBase64) => {
+        const nextSlots = [...imageSlots];
+        nextSlots[activeSlot] = compressedBase64;
+        setImageSlots(nextSlots);
+        setIsUploading(false);
+        if (window.showToast) {
+          window.showToast(`Image slot ${activeSlot + 1} loaded & compressed successfully.`, 'success');
+        }
+      })
+      .catch((err) => {
+        console.error("Compression error:", err);
+        setIsUploading(false);
+        if (window.showToast) window.showToast('Failed to load and compress image.', 'danger');
+      });
   };
 
   // Form Reset Helper
