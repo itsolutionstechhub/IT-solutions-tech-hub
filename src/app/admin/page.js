@@ -74,6 +74,7 @@ export default function AdminPortal() {
   const [externalUrl, setExternalUrl] = useState('');
   const fileInputRef = useRef(null);
   const editorRef = useRef(null);
+  const savedRangeRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
 
   // Dynamic Metadata Fields States
@@ -265,9 +266,32 @@ export default function AdminPortal() {
     setMetaVersion('V1.0');
   };
 
+  // Save current cursor/highlight selection in the editor
+  const saveSelection = () => {
+    if (typeof window === 'undefined') return;
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      // Ensure range is inside the editor box
+      if (editorRef.current && editorRef.current.contains(range.commonAncestorContainer)) {
+        savedRangeRef.current = range;
+      }
+    }
+  };
+
+  // Restore cursor/highlight selection back to the editor
+  const restoreSelection = () => {
+    if (typeof window === 'undefined' || !savedRangeRef.current) return;
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(savedRangeRef.current);
+  };
+
   // Execute Rich Text formatting command (bold, italic, underline, colors, lists, etc.)
   const executeCommand = (command, value = null) => {
+    restoreSelection();
     document.execCommand(command, false, value);
+    saveSelection(); // Save new selection range
     if (editorRef.current) {
       setDescription(editorRef.current.innerHTML);
     }
@@ -275,14 +299,18 @@ export default function AdminPortal() {
 
   // Apply custom Line Spacing to selected editor text
   const applyLineHeight = (value) => {
+    restoreSelection();
     const selection = window.getSelection();
     if (!selection || !selection.rangeCount) return;
     const range = selection.getRangeAt(0);
-    const span = document.createElement('span');
-    span.style.lineHeight = value;
-    span.appendChild(range.extractContents());
-    range.insertNode(span);
-    if (editorRef.current) {
+    
+    // Check if range is inside the editor
+    if (editorRef.current && editorRef.current.contains(range.commonAncestorContainer)) {
+      const span = document.createElement('span');
+      span.style.lineHeight = value;
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      saveSelection();
       setDescription(editorRef.current.innerHTML);
     }
   };
@@ -905,6 +933,9 @@ export default function AdminPortal() {
                     onBlur={() => {
                       if (editorRef.current) setDescription(editorRef.current.innerHTML);
                     }}
+                    onMouseUp={saveSelection}
+                    onKeyUp={saveSelection}
+                    onFocus={saveSelection}
                     style={{ 
                       minHeight: '350px', 
                       maxHeight: '550px',
