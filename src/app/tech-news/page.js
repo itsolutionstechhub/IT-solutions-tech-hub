@@ -9,7 +9,9 @@ export default function TechNews() {
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 6;
 
-  const newsPosts = initialPosts.filter(p => p.category === 'tech-news');
+  const newsPosts = initialPosts
+    .filter(p => p.category === 'tech-news')
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
   const totalPages = Math.ceil(newsPosts.length / postsPerPage);
 
   useEffect(() => {

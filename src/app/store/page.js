@@ -6,7 +6,9 @@ import initialPosts from '../../../content/posts.json';
 import PostCard from '../../components/PostCard';
 
 export default function Store() {
-  const storePosts = initialPosts.filter(p => p.category === 'store');
+  const storePosts = initialPosts
+    .filter(p => p.category === 'store')
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
   return (
     <section id="view-store" className="view-section active">

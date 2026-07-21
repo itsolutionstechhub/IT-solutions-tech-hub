@@ -6,7 +6,9 @@ import initialPosts from '../../../content/posts.json';
 import PostCard from '../../components/PostCard';
 
 export default function RepairArticles() {
-  const repairPosts = initialPosts.filter(p => p.category === 'repair-articles');
+  const repairPosts = initialPosts
+    .filter(p => p.category === 'repair-articles')
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
   return (
     <section id="view-repair-articles" className="view-section active">

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import settings from '../../../content/settings.json';
 import initialPosts from '../../../content/posts.json';
+import PostCard from '../../components/PostCard';
 
 // Helper function to compress and resize image on the client-side
 const compressImage = (file, maxWidth, maxHeight, quality) => {
@@ -82,6 +83,38 @@ export default function AdminPortal() {
   const [metaSize, setMetaSize] = useState('');
   const [metaVersion, setMetaVersion] = useState('V1.0');
 
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  // Helper to generate current preview object for modal
+  const getPreviewPost = () => {
+    const cleanImages = imageSlots.filter(img => img !== "");
+    const coverImage = cleanImages[0] || "/images/posts/default.png";
+    const metadata = {};
+    if (category === 'store') {
+      metadata.warranty = metaWarranty;
+      metadata.condition = metaCondition;
+      metadata.stock = metaStock;
+    } else if (category === 'repair-articles') {
+      metadata.board = metaBoard;
+      metadata.size = metaSize;
+      metadata.version = metaVersion;
+    }
+
+    return {
+      id: postId || "preview-" + Date.now(),
+      category: category || "tech-news",
+      title: title || "Resource Title Preview",
+      description: description || "Resource description preview notes go here...",
+      showSpecs: showSpecs === 'show',
+      images: cleanImages.length > 0 ? cleanImages : [coverImage],
+      image: coverImage,
+      link: sourceLink,
+      downloadLink,
+      price: category === 'store' ? price : '',
+      metadata
+    };
+  };
+
   // Verify Admin Authentication on Mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -95,8 +128,9 @@ export default function AdminPortal() {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    if (passcode.toLowerCase() === 'admin') {
+    if (passcode.trim()) {
       sessionStorage.setItem('isAdminAuthenticated', 'true');
+      sessionStorage.setItem('adminPasscode', passcode.trim());
       setIsAuthenticated(true);
       setPostsList(initialPosts);
       if (window.showToast) {
@@ -104,7 +138,7 @@ export default function AdminPortal() {
       }
     } else {
       if (window.showToast) {
-        window.showToast('Access Denied! Incorrect security passcode.', 'danger');
+        window.showToast('Access Denied! Passcode cannot be empty.', 'danger');
       }
       setPasscode('');
     }
@@ -112,6 +146,7 @@ export default function AdminPortal() {
 
   const handleLogout = () => {
     sessionStorage.removeItem('isAdminAuthenticated');
+    sessionStorage.removeItem('adminPasscode');
     setIsAuthenticated(false);
     setPasscode('');
     router.push('/');
@@ -278,7 +313,7 @@ export default function AdminPortal() {
     }
 
     try {
-      const securePasscode = sessionStorage.getItem('isAdminAuthenticated') === 'true' ? 'admin' : '';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
       
       const response = await fetch('/api/admin/posts', {
         method: 'POST',
@@ -322,7 +357,7 @@ export default function AdminPortal() {
     if (window.showToast) window.showToast('Deleting resource from GitHub...', 'info');
 
     try {
-      const securePasscode = sessionStorage.getItem('isAdminAuthenticated') === 'true' ? 'admin' : '';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
 
       const response = await fetch(`/api/admin/posts?id=${id}`, {
         method: 'DELETE',
@@ -360,7 +395,7 @@ export default function AdminPortal() {
     if (window.showToast) window.showToast('Syncing configurations with GitHub...', 'info');
 
     try {
-      const securePasscode = sessionStorage.getItem('isAdminAuthenticated') === 'true' ? 'admin' : '';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
 
       const response = await fetch('/api/admin/settings', {
         method: 'POST',
@@ -689,12 +724,28 @@ export default function AdminPortal() {
                   <input type="text" id="form-download" className="form-control" placeholder="e.g. https://google-drive.com/bios.bin" value={downloadLink} onChange={(e) => setDownloadLink(e.target.value)} />
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    style={{ flex: 1, borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}
+                    onClick={() => {
+                      if (!category || !title || !description) {
+                        if (window.showToast) window.showToast('Please select Category, Title and Description to preview.', 'warning');
+                        return;
+                      }
+                      setShowPreviewModal(true);
+                    }}
+                  >
+                    <i className="fa-solid fa-eye"></i> Preview
+                  </button>
+
                   {postId && (
                     <button type="button" className="btn btn-secondary" onClick={resetForm} style={{ flex: 1 }}>
                       Cancel
                     </button>
                   )}
+
                   <button type="submit" className="btn btn-primary" style={{ flex: 1.5 }}>
                     {postId ? 'Update Resource' : 'Add Resource'}
                   </button>
@@ -1040,6 +1091,68 @@ export default function AdminPortal() {
           </div>
         )}
       </div>
+
+      {/* Preview Resource Modal Overlay */}
+      {showPreviewModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 1000,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: 'hsl(var(--bg-dark))',
+            border: '1px solid hsl(var(--border-color))',
+            borderRadius: 'var(--radius-md)',
+            maxWidth: '650px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '24px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.8)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-eye" style={{ color: 'hsl(var(--primary))' }}></i> Live Resource Preview
+              </h3>
+              <button type="button" onClick={() => setShowPreviewModal(false)} style={{ background: 'none', border: 'none', color: 'hsl(var(--text-muted))', fontSize: '20px', cursor: 'pointer' }}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <p style={{ color: 'hsl(var(--text-muted))', fontSize: '13px', marginBottom: '16px' }}>This is how your post card will look on the live website:</p>
+              <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+                <PostCard post={getPreviewPost()} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid hsl(var(--border-color) / 0.5)', paddingTop: '16px' }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowPreviewModal(false)}>
+                Back to Editing
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-primary" 
+                onClick={(e) => {
+                  setShowPreviewModal(false);
+                  handlePostSubmit(e);
+                }}
+              >
+                <i className="fa-solid fa-cloud-arrow-up"></i> Looks Good! Publish to Web
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

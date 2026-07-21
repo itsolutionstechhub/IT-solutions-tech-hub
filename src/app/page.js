@@ -18,12 +18,15 @@ export default function Home() {
   const showStore = settings.showStore !== false;
   const showStats = settings.showStatsCounters !== false;
 
-  // Filter posts based on search query
+  // Filter posts based on search query, sorted by newest first
   const getFilteredPosts = () => {
-    const val = searchQuery.toLowerCase().trim();
-    if (!val) return initialPosts;
+    let posts = [...initialPosts];
+    posts.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
-    return initialPosts.filter(post => 
+    const val = searchQuery.toLowerCase().trim();
+    if (!val) return posts;
+
+    return posts.filter(post => 
       post.title.toLowerCase().includes(val) ||
       post.description.toLowerCase().includes(val) ||
       post.category.toLowerCase().includes(val) ||

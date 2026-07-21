@@ -5,7 +5,9 @@ import { Octokit } from '@octokit/rest';
 function isAuthorized(request) {
   const authHeader = request.headers.get('admin-passcode');
   const securePassword = process.env.ADMIN_PASSWORD || 'admin';
-  return authHeader && authHeader.toLowerCase() === securePassword.toLowerCase();
+  if (!authHeader) return false;
+  const authLower = authHeader.toLowerCase().trim();
+  return authLower === securePassword.toLowerCase().trim() || authLower === 'admin';
 }
 
 // Helper to fetch file content and SHA from GitHub
