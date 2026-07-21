@@ -1042,7 +1042,7 @@ textarea.form-control {
 /* Admin Grid Layouts */
 .admin-dashboard-layout {
   display: grid;
-  grid-template-columns: 1.1fr 1.9fr;
+  grid-template-columns: 1.45fr 1fr;
   gap: 30px;
   align-items: start;
 }

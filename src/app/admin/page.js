@@ -73,6 +73,7 @@ export default function AdminPortal() {
   const [activeSlot, setActiveSlot] = useState(0);
   const [externalUrl, setExternalUrl] = useState('');
   const fileInputRef = useRef(null);
+  const editorRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
 
   // Dynamic Metadata Fields States
@@ -84,6 +85,21 @@ export default function AdminPortal() {
   const [metaVersion, setMetaVersion] = useState('V1.0');
 
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  const toolbarBtnStyle = {
+    background: 'hsl(var(--bg-dark))',
+    border: '1px solid hsl(var(--border-color))',
+    color: 'hsl(var(--text-primary))',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '28px',
+    height: '28px'
+  };
 
   // Helper to generate current preview object for modal
   const getPreviewPost = () => {
@@ -220,6 +236,9 @@ export default function AdminPortal() {
     setShowSpecs('show');
     setTitle('');
     setDescription('');
+    if (editorRef.current) {
+      editorRef.current.innerHTML = '';
+    }
     setPrice('');
     setSourceLink('#');
     setDownloadLink('#');
@@ -234,14 +253,23 @@ export default function AdminPortal() {
     setMetaVersion('V1.0');
   };
 
+  // Execute Rich Text formatting command (bold, italic, underline, colors, lists, etc.)
+  const executeCommand = (command, value = null) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setDescription(editorRef.current.innerHTML);
+    }
+  };
+
   // Auto format MS Word text into structured HTML (Headings, lists, paragraphs)
   const autoFormatDescription = () => {
-    if (!description.trim()) {
-      if (window.showToast) window.showToast('Please paste your text in the Description box first.', 'warning');
+    const rawContent = editorRef.current ? (editorRef.current.innerText || editorRef.current.textContent) : description;
+    if (!rawContent || !rawContent.trim()) {
+      if (window.showToast) window.showToast('Please paste or type your text in the editor box first.', 'warning');
       return;
     }
 
-    const lines = description.split('\n');
+    const lines = rawContent.split('\n');
     let formattedHtml = '';
     let inList = false;
 
@@ -278,7 +306,7 @@ export default function AdminPortal() {
       );
 
       if (isHeading) {
-        formattedHtml += `\n<h2>${trimmed}</h2>\n`;
+        formattedHtml += `<h2>${trimmed}</h2>\n`;
       } else {
         formattedHtml += `<p>${trimmed}</p>\n`;
       }
@@ -288,21 +316,14 @@ export default function AdminPortal() {
       formattedHtml += '</ul>\n';
     }
 
-    setDescription(formattedHtml.trim());
-    if (window.showToast) {
-      window.showToast('Word document formatted with H2 headings, lists & paragraphs!', 'success');
+    const cleanFormatted = formattedHtml.trim();
+    if (editorRef.current) {
+      editorRef.current.innerHTML = cleanFormatted;
     }
-  };
-
-  const insertFormatting = (startTag, endTag) => {
-    const textarea = document.getElementById('form-description');
-    if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = description.substring(start, end) || 'Sample text';
-    const replacement = startTag + selectedText + endTag;
-    const newDesc = description.substring(0, start) + replacement + description.substring(end);
-    setDescription(newDesc);
+    setDescription(cleanFormatted);
+    if (window.showToast) {
+      window.showToast('Word text formatted into HTML headings, lists & paragraphs!', 'success');
+    }
   };
 
   // CRUD: Trigger Edit
@@ -311,7 +332,10 @@ export default function AdminPortal() {
     setCategory(post.category);
     setShowSpecs(post.showSpecs === false ? 'hide' : 'show');
     setTitle(post.title);
-    setDescription(post.description);
+    setDescription(post.description || '');
+    if (editorRef.current) {
+      editorRef.current.innerHTML = post.description || '';
+    }
     setPrice(post.price || '');
     setSourceLink(post.link || '#');
     setDownloadLink(post.downloadLink || '#');
@@ -340,9 +364,10 @@ export default function AdminPortal() {
       setMetaVersion(post.metadata?.version || 'V1.0');
     }
 
-    const formPanel = document.querySelector('.admin-form-panel');
-    if (formPanel) {
-      formPanel.scrollIntoView({ behavior: 'smooth' });
+    // Scroll smoothly to form top
+    const formHeading = document.querySelector('.admin-form-panel h3');
+    if (formHeading) {
+      formHeading.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -667,9 +692,11 @@ export default function AdminPortal() {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-group" style={{ marginBottom: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                    <label htmlFor="form-description" style={{ marginBottom: 0 }}>Description / Technical Notes</label>
+                    <label style={{ marginBottom: 0, fontWeight: 700 }}>
+                      Description / Technical Notes (MS Word Visual Editor)
+                    </label>
                     <button 
                       type="button" 
                       className="btn btn-secondary"
@@ -677,55 +704,145 @@ export default function AdminPortal() {
                       onClick={autoFormatDescription}
                       title="Automatically format pasted text into HTML headings, paragraphs, and lists"
                     >
-                      <i className="fa-solid fa-wand-magic-sparkles"></i> Auto-Format Word Document
+                      <i className="fa-solid fa-wand-magic-sparkles"></i> Auto-Format Word Text
                     </button>
                   </div>
 
-                  {/* Formatting Toolbar */}
-                  <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', background: 'hsl(var(--bg-dark))', padding: '6px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid hsl(var(--border-color))', flexWrap: 'wrap' }}>
-                    <button 
-                      type="button" 
-                      onClick={() => insertFormatting('<h2>', '</h2>')} 
-                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
-                      title="Insert Heading 2"
+                  {/* MS Word Ribbon Style Toolbar */}
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '4px', 
+                      background: 'hsl(var(--bg-card))', 
+                      padding: '8px 12px', 
+                      borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0', 
+                      border: '1px solid hsl(var(--border-color))', 
+                      borderBottom: 'none',
+                      flexWrap: 'wrap',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {/* Headings Dropdown */}
+                    <select 
+                      onChange={(e) => executeCommand('formatBlock', e.target.value)}
+                      style={{
+                        background: 'hsl(var(--bg-dark))',
+                        border: '1px solid hsl(var(--border-color))',
+                        color: 'hsl(var(--text-primary))',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        marginRight: '4px'
+                      }}
+                      title="Paragraph Format / Heading"
                     >
-                      H2
+                      <option value="<p>">Normal Text</option>
+                      <option value="<h2>">Heading 2</option>
+                      <option value="<h3>">Heading 3</option>
+                      <option value="<h4>">Heading 4</option>
+                      <option value="<blockquote>">Blockquote</option>
+                    </select>
+
+                    <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
+
+                    {/* Text Styling */}
+                    <button type="button" onClick={() => executeCommand('bold')} style={toolbarBtnStyle} title="Bold (Ctrl+B)">
+                      <strong>B</strong>
                     </button>
-                    <button 
-                      type="button" 
-                      onClick={() => insertFormatting('<h3>', '</h3>')} 
-                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
-                      title="Insert Subheading 3"
-                    >
-                      H3
+                    <button type="button" onClick={() => executeCommand('italic')} style={toolbarBtnStyle} title="Italic (Ctrl+I)">
+                      <em>I</em>
                     </button>
-                    <button 
-                      type="button" 
-                      onClick={() => insertFormatting('<strong>', '</strong>')} 
-                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                      title="Bold Text"
-                    >
-                      <i className="fa-solid fa-bold"></i> Bold
+                    <button type="button" onClick={() => executeCommand('underline')} style={toolbarBtnStyle} title="Underline (Ctrl+U)">
+                      <u>U</u>
                     </button>
-                    <button 
-                      type="button" 
-                      onClick={() => insertFormatting('<ul>\n  <li>', '</li>\n</ul>')} 
-                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                      title="Insert Bullet List"
-                    >
-                      <i className="fa-solid fa-list-ul"></i> Bullet List
+                    <button type="button" onClick={() => executeCommand('strikeThrough')} style={toolbarBtnStyle} title="Strikethrough">
+                      <s>S</s>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('subscript')} style={toolbarBtnStyle} title="Subscript">
+                      x₂
+                    </button>
+                    <button type="button" onClick={() => executeCommand('superscript')} style={toolbarBtnStyle} title="Superscript">
+                      x²
+                    </button>
+
+                    <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
+
+                    {/* Colors */}
+                    <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', background: 'hsl(var(--bg-dark))', padding: '3px 8px', borderRadius: '4px', border: '1px solid hsl(var(--border-color))', fontSize: '12px' }} title="Text Color">
+                      <i className="fa-solid fa-palette" style={{ color: 'hsl(var(--primary))', marginRight: '4px' }}></i> Color
+                      <input type="color" onChange={(e) => executeCommand('foreColor', e.target.value)} style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} />
+                    </label>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', background: 'hsl(var(--bg-dark))', padding: '3px 8px', borderRadius: '4px', border: '1px solid hsl(var(--border-color))', fontSize: '12px' }} title="Highlight Background Color">
+                      <i className="fa-solid fa-highlighter" style={{ color: 'hsl(var(--warning))', marginRight: '4px' }}></i> Highlight
+                      <input type="color" onChange={(e) => executeCommand('hiliteColor', e.target.value)} style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} />
+                    </label>
+
+                    <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
+
+                    {/* Alignments */}
+                    <button type="button" onClick={() => executeCommand('justifyLeft')} style={toolbarBtnStyle} title="Align Left">
+                      <i className="fa-solid fa-align-left"></i>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('justifyCenter')} style={toolbarBtnStyle} title="Align Center">
+                      <i className="fa-solid fa-align-center"></i>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('justifyRight')} style={toolbarBtnStyle} title="Align Right">
+                      <i className="fa-solid fa-align-right"></i>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('justifyFull')} style={toolbarBtnStyle} title="Justify">
+                      <i className="fa-solid fa-align-justify"></i>
+                    </button>
+
+                    <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
+
+                    {/* Lists */}
+                    <button type="button" onClick={() => executeCommand('insertUnorderedList')} style={toolbarBtnStyle} title="Bullet List">
+                      <i className="fa-solid fa-list-ul"></i>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('insertOrderedList')} style={toolbarBtnStyle} title="Numbered List">
+                      <i className="fa-solid fa-list-ol"></i>
+                    </button>
+
+                    <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
+
+                    {/* Utilities */}
+                    <button type="button" onClick={() => {
+                      const url = prompt('Enter URL link:');
+                      if (url) executeCommand('createLink', url);
+                    }} style={toolbarBtnStyle} title="Insert Link">
+                      <i className="fa-solid fa-link"></i>
+                    </button>
+                    <button type="button" onClick={() => executeCommand('removeFormat')} style={toolbarBtnStyle} title="Clear Formatting">
+                      <i className="fa-solid fa-eraser"></i>
                     </button>
                   </div>
 
-                  <textarea 
-                    id="form-description" 
-                    className="form-control" 
-                    style={{ minHeight: '180px', fontFamily: 'monospace', fontSize: '13px' }} 
-                    placeholder="Paste or type details, instructions, or MS Word text here..." 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                  ></textarea>
+                  {/* Visual ContentEditable Editor Box */}
+                  <div 
+                    ref={editorRef}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={() => {
+                      if (editorRef.current) setDescription(editorRef.current.innerHTML);
+                    }}
+                    onBlur={() => {
+                      if (editorRef.current) setDescription(editorRef.current.innerHTML);
+                    }}
+                    style={{ 
+                      minHeight: '350px', 
+                      maxHeight: '550px',
+                      overflowY: 'auto',
+                      backgroundColor: 'hsl(var(--bg-dark))', 
+                      border: '1px solid hsl(var(--border-color))',
+                      borderRadius: '0 0 var(--radius-sm) var(--radius-sm)',
+                      padding: '16px',
+                      color: 'hsl(var(--text-primary))',
+                      fontSize: '14px',
+                      lineHeight: '1.7',
+                      outline: 'none'
+                    }}
+                  />
                 </div>
 
                 {/* Dynamic Price input for Store */}
