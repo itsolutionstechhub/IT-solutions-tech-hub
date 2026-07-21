@@ -101,6 +101,18 @@ export default function AdminPortal() {
     height: '28px'
   };
 
+  const toolbarDropdownStyle = {
+    background: 'hsl(var(--bg-dark))',
+    border: '1px solid hsl(var(--border-color))',
+    color: 'hsl(var(--text-primary))',
+    padding: '4px 6px',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
+    marginRight: '4px',
+    outline: 'none'
+  };
+
   // Helper to generate current preview object for modal
   const getPreviewPost = () => {
     const cleanImages = imageSlots.filter(img => img !== "");
@@ -256,6 +268,20 @@ export default function AdminPortal() {
   // Execute Rich Text formatting command (bold, italic, underline, colors, lists, etc.)
   const executeCommand = (command, value = null) => {
     document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setDescription(editorRef.current.innerHTML);
+    }
+  };
+
+  // Apply custom Line Spacing to selected editor text
+  const applyLineHeight = (value) => {
+    const selection = window.getSelection();
+    if (!selection || !selection.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    const span = document.createElement('span');
+    span.style.lineHeight = value;
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
     if (editorRef.current) {
       setDescription(editorRef.current.innerHTML);
     }
@@ -725,6 +751,7 @@ export default function AdminPortal() {
                     {/* Headings Dropdown */}
                     <select 
                       onChange={(e) => executeCommand('formatBlock', e.target.value)}
+                      onMouseDown={(e) => e.preventDefault()}
                       style={{
                         background: 'hsl(var(--bg-dark))',
                         border: '1px solid hsl(var(--border-color))',
@@ -733,7 +760,8 @@ export default function AdminPortal() {
                         borderRadius: '4px',
                         fontSize: '12px',
                         cursor: 'pointer',
-                        marginRight: '4px'
+                        marginRight: '4px',
+                        outline: 'none'
                       }}
                       title="Paragraph Format / Heading"
                     >
@@ -744,76 +772,124 @@ export default function AdminPortal() {
                       <option value="<blockquote>">Blockquote</option>
                     </select>
 
+                    {/* Line Spacing Dropdown */}
+                    <select 
+                      onChange={(e) => {
+                        applyLineHeight(e.target.value);
+                        e.target.value = ''; // reset selection
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={toolbarDropdownStyle}
+                      title="Line Spacing"
+                    >
+                      <option value="" disabled selected>↕️ Spacing</option>
+                      <option value="1.0">1.0 (Single)</option>
+                      <option value="1.2">1.2</option>
+                      <option value="1.5">1.5 (1.5x)</option>
+                      <option value="1.8">1.8</option>
+                      <option value="2.0">2.0 (Double)</option>
+                    </select>
+
                     <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
 
                     {/* Text Styling */}
-                    <button type="button" onClick={() => executeCommand('bold')} style={toolbarBtnStyle} title="Bold (Ctrl+B)">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('bold')} style={toolbarBtnStyle} title="Bold (Ctrl+B)">
                       <strong>B</strong>
                     </button>
-                    <button type="button" onClick={() => executeCommand('italic')} style={toolbarBtnStyle} title="Italic (Ctrl+I)">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('italic')} style={toolbarBtnStyle} title="Italic (Ctrl+I)">
                       <em>I</em>
                     </button>
-                    <button type="button" onClick={() => executeCommand('underline')} style={toolbarBtnStyle} title="Underline (Ctrl+U)">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('underline')} style={toolbarBtnStyle} title="Underline (Ctrl+U)">
                       <u>U</u>
                     </button>
-                    <button type="button" onClick={() => executeCommand('strikeThrough')} style={toolbarBtnStyle} title="Strikethrough">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('strikeThrough')} style={toolbarBtnStyle} title="Strikethrough">
                       <s>S</s>
                     </button>
-                    <button type="button" onClick={() => executeCommand('subscript')} style={toolbarBtnStyle} title="Subscript">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('subscript')} style={toolbarBtnStyle} title="Subscript">
                       x₂
                     </button>
-                    <button type="button" onClick={() => executeCommand('superscript')} style={toolbarBtnStyle} title="Superscript">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('superscript')} style={toolbarBtnStyle} title="Superscript">
                       x²
                     </button>
 
                     <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
 
-                    {/* Colors */}
-                    <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', background: 'hsl(var(--bg-dark))', padding: '3px 8px', borderRadius: '4px', border: '1px solid hsl(var(--border-color))', fontSize: '12px' }} title="Text Color">
-                      <i className="fa-solid fa-palette" style={{ color: 'hsl(var(--primary))', marginRight: '4px' }}></i> Color
-                      <input type="color" onChange={(e) => executeCommand('foreColor', e.target.value)} style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} />
-                    </label>
-                    <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', background: 'hsl(var(--bg-dark))', padding: '3px 8px', borderRadius: '4px', border: '1px solid hsl(var(--border-color))', fontSize: '12px' }} title="Highlight Background Color">
-                      <i className="fa-solid fa-highlighter" style={{ color: 'hsl(var(--warning))', marginRight: '4px' }}></i> Highlight
-                      <input type="color" onChange={(e) => executeCommand('hiliteColor', e.target.value)} style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} />
-                    </label>
+                    {/* Quick Colors Selector */}
+                    <select 
+                      onChange={(e) => {
+                        executeCommand('foreColor', e.target.value);
+                        e.target.value = ''; // reset selection
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={toolbarDropdownStyle}
+                      title="Text Color"
+                    >
+                      <option value="" disabled selected>🎨 Color</option>
+                      <option value="hsl(var(--primary))">Theme Blue</option>
+                      <option value="hsl(var(--secondary))">Theme Purple</option>
+                      <option value="hsl(var(--accent))">Theme Green</option>
+                      <option value="hsl(var(--warning))">Theme Yellow</option>
+                      <option value="#ff4a4a">Bright Red</option>
+                      <option value="#39d353">Bright Green</option>
+                      <option value="#ffffff">White</option>
+                      <option value="hsl(var(--text-primary))">Default (Reset)</option>
+                    </select>
+
+                    {/* Highlight background selector */}
+                    <select 
+                      onChange={(e) => {
+                        executeCommand('hiliteColor', e.target.value);
+                        e.target.value = ''; // reset selection
+                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={toolbarDropdownStyle}
+                      title="Highlight Background Color"
+                    >
+                      <option value="" disabled selected>🖍️ Highlight</option>
+                      <option value="hsla(191, 97%, 47%, 0.3)">Blue Highlight</option>
+                      <option value="hsla(263, 90%, 70%, 0.3)">Purple Highlight</option>
+                      <option value="hsla(45, 93%, 47%, 0.35)">Yellow Highlight</option>
+                      <option value="rgba(255, 74, 74, 0.3)">Red Highlight</option>
+                      <option value="rgba(57, 211, 83, 0.3)">Green Highlight</option>
+                      <option value="transparent">Clear Highlight</option>
+                    </select>
 
                     <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
 
                     {/* Alignments */}
-                    <button type="button" onClick={() => executeCommand('justifyLeft')} style={toolbarBtnStyle} title="Align Left">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('justifyLeft')} style={toolbarBtnStyle} title="Align Left">
                       <i className="fa-solid fa-align-left"></i>
                     </button>
-                    <button type="button" onClick={() => executeCommand('justifyCenter')} style={toolbarBtnStyle} title="Align Center">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('justifyCenter')} style={toolbarBtnStyle} title="Align Center">
                       <i className="fa-solid fa-align-center"></i>
                     </button>
-                    <button type="button" onClick={() => executeCommand('justifyRight')} style={toolbarBtnStyle} title="Align Right">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('justifyRight')} style={toolbarBtnStyle} title="Align Right">
                       <i className="fa-solid fa-align-right"></i>
                     </button>
-                    <button type="button" onClick={() => executeCommand('justifyFull')} style={toolbarBtnStyle} title="Justify">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('justifyFull')} style={toolbarBtnStyle} title="Justify">
                       <i className="fa-solid fa-align-justify"></i>
                     </button>
 
                     <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
 
                     {/* Lists */}
-                    <button type="button" onClick={() => executeCommand('insertUnorderedList')} style={toolbarBtnStyle} title="Bullet List">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('insertUnorderedList')} style={toolbarBtnStyle} title="Bullet List">
                       <i className="fa-solid fa-list-ul"></i>
                     </button>
-                    <button type="button" onClick={() => executeCommand('insertOrderedList')} style={toolbarBtnStyle} title="Numbered List">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('insertOrderedList')} style={toolbarBtnStyle} title="Numbered List">
                       <i className="fa-solid fa-list-ol"></i>
                     </button>
 
                     <div style={{ width: '1px', height: '20px', background: 'hsl(var(--border-color))', margin: '0 4px' }}></div>
 
                     {/* Utilities */}
-                    <button type="button" onClick={() => {
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => {
                       const url = prompt('Enter URL link:');
                       if (url) executeCommand('createLink', url);
                     }} style={toolbarBtnStyle} title="Insert Link">
                       <i className="fa-solid fa-link"></i>
                     </button>
-                    <button type="button" onClick={() => executeCommand('removeFormat')} style={toolbarBtnStyle} title="Clear Formatting">
+                    <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => executeCommand('removeFormat')} style={toolbarBtnStyle} title="Clear Formatting">
                       <i className="fa-solid fa-eraser"></i>
                     </button>
                   </div>
