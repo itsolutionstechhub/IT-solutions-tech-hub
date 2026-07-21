@@ -29,6 +29,7 @@ async function getGitHubFile(octokit, owner, repo, branch, path) {
       repo,
       path,
       ref: branch,
+      headers: { 'cache-control': 'no-cache' }
     });
     
     const content = Buffer.from(data.content, 'base64').toString('utf8');
@@ -38,6 +39,28 @@ async function getGitHubFile(octokit, owner, repo, branch, path) {
       return { content: null, sha: null };
     }
     throw error;
+  }
+}
+
+// Helper to commit file with fresh SHA retry loop to prevent SHA mismatch 409 conflicts
+async function commitWithRetry(octokit, owner, repo, branch, path, message, contentStr) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { sha } = await getGitHubFile(octokit, owner, repo, branch, path);
+      await octokit.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        path,
+        message,
+        content: Buffer.from(contentStr).toString('base64'),
+        sha: sha || undefined,
+        branch,
+      });
+      return; // Success
+    } catch (err) {
+      if (attempt === 3) throw err;
+      await new Promise(r => setTimeout(r, 600));
+    }
   }
 }
 
@@ -64,19 +87,17 @@ export async function POST(request) {
     const targetBranch = await getBranch(octokit, GITHUB_OWNER, GITHUB_REPO);
     const settingsFilePath = 'content/settings.json';
 
-    const { sha: settingsSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, settingsFilePath);
-
     const updatedContentStr = JSON.stringify(newSettings, null, 2);
 
-    await octokit.repos.createOrUpdateFileContents({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
-      path: settingsFilePath,
-      message: 'Update dynamic site configurations',
-      content: Buffer.from(updatedContentStr).toString('base64'),
-      sha: settingsSha || undefined,
-      branch: targetBranch,
-    });
+    await commitWithRetry(
+      octokit,
+      GITHUB_OWNER,
+      GITHUB_REPO,
+      targetBranch,
+      settingsFilePath,
+      'Update dynamic site configurations',
+      updatedContentStr
+    );
 
     return NextResponse.json({ success: true, settings: newSettings });
 

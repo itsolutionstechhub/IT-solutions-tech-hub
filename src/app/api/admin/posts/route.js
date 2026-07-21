@@ -29,6 +29,7 @@ async function getGitHubFile(octokit, owner, repo, branch, path) {
       repo,
       path,
       ref: branch,
+      headers: { 'cache-control': 'no-cache' }
     });
     
     // Content is returned as base64
@@ -39,6 +40,28 @@ async function getGitHubFile(octokit, owner, repo, branch, path) {
       return { content: null, sha: null };
     }
     throw error;
+  }
+}
+
+// Helper to commit file with fresh SHA retry loop to prevent SHA mismatch 409 conflicts
+async function commitWithRetry(octokit, owner, repo, branch, path, message, contentStr) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { sha } = await getGitHubFile(octokit, owner, repo, branch, path);
+      await octokit.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        path,
+        message,
+        content: Buffer.from(contentStr).toString('base64'),
+        sha: sha || undefined,
+        branch,
+      });
+      return; // Success
+    } catch (err) {
+      if (attempt === 3) throw err;
+      await new Promise(r => setTimeout(r, 600));
+    }
   }
 }
 
@@ -80,15 +103,12 @@ export async function POST(request) {
           const filename = `${postData.id}-${i}-${Date.now()}.${ext}`;
           const githubPath = `public/images/posts/${filename}`;
 
-          const { sha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, githubPath);
-
           const uploadPromise = octokit.repos.createOrUpdateFileContents({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
             path: githubPath,
             message: `Upload image ${i + 1} for post: ${postData.title}`,
             content: base64Data,
-            sha: sha || undefined,
             branch: targetBranch,
           }).then(() => {
             finalImages[i] = `/images/posts/${filename}`;
@@ -109,9 +129,9 @@ export async function POST(request) {
     postData.image = coverImage;
     postData.images = cleanImages.length > 0 ? cleanImages : [coverImage];
 
-    // 2. Read, update and commit content/posts.json
+    // 2. Read latest posts.json content from GitHub
     const postsFilePath = 'content/posts.json';
-    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
+    const { content: postsJsonContent } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
     
     let postsList = [];
     if (postsJsonContent) {
@@ -132,15 +152,16 @@ export async function POST(request) {
 
     const updatedContentStr = JSON.stringify(postsList, null, 2);
     
-    await octokit.repos.createOrUpdateFileContents({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
-      path: postsFilePath,
-      message: existingIndex !== -1 ? `Update post: ${postData.title}` : `Create post: ${postData.title}`,
-      content: Buffer.from(updatedContentStr).toString('base64'),
-      sha: postsJsonSha || undefined,
-      branch: targetBranch,
-    });
+    // Commit posts.json with retry logic using fresh SHA
+    await commitWithRetry(
+      octokit,
+      GITHUB_OWNER,
+      GITHUB_REPO,
+      targetBranch,
+      postsFilePath,
+      existingIndex !== -1 ? `Update post: ${postData.title}` : `Create post: ${postData.title}`,
+      updatedContentStr
+    );
 
     return NextResponse.json({ success: true, post: postData });
 
@@ -183,7 +204,7 @@ export async function DELETE(request) {
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
     const targetBranch = await getBranch(octokit, GITHUB_OWNER, GITHUB_REPO);
     const postsFilePath = 'content/posts.json';
-    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
+    const { content: postsJsonContent } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
 
     if (!postsJsonContent) {
       return NextResponse.json({ error: 'Posts database file not found on GitHub.' }, { status: 404 });
@@ -198,15 +219,15 @@ export async function DELETE(request) {
 
     const updatedContentStr = JSON.stringify(filteredList, null, 2);
     
-    await octokit.repos.createOrUpdateFileContents({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPO,
-      path: postsFilePath,
-      message: `Delete post ID: ${postId}`,
-      content: Buffer.from(updatedContentStr).toString('base64'),
-      sha: postsJsonSha,
-      branch: targetBranch,
-    });
+    await commitWithRetry(
+      octokit,
+      GITHUB_OWNER,
+      GITHUB_REPO,
+      targetBranch,
+      postsFilePath,
+      `Delete post ID: ${postId}`,
+      updatedContentStr
+    );
 
     return NextResponse.json({ success: true, deletedId: postId });
 
