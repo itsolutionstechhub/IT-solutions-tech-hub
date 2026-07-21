@@ -1042,7 +1042,7 @@ textarea.form-control {
 /* Admin Grid Layouts */
 .admin-dashboard-layout {
   display: grid;
-  grid-template-columns: 1.45fr 1fr;
+  grid-template-columns: 1.1fr 1.9fr;
   gap: 30px;
   align-items: start;
 }
@@ -1825,8 +1825,8 @@ footer {
 .article-content-body {
   color: hsl(var(--text-secondary));
   font-size: 15px;
-  line-height: 1.7;
-  white-space: normal;
+  line-height: 1.8;
+  white-space: pre-line;
   word-break: break-word;
 }
 
