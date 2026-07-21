@@ -149,7 +149,7 @@ export default function PostDetail({ params }) {
             </h3>
             <div 
               id="detail-description" 
-              style={{ color: 'hsl(var(--text-secondary))', fontSize: '15px', lineHeight: '1.8' }}
+              className="article-content-body"
               dangerouslySetInnerHTML={{ __html: post.description }}
             />
           </div>

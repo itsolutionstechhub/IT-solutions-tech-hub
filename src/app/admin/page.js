@@ -234,6 +234,77 @@ export default function AdminPortal() {
     setMetaVersion('V1.0');
   };
 
+  // Auto format MS Word text into structured HTML (Headings, lists, paragraphs)
+  const autoFormatDescription = () => {
+    if (!description.trim()) {
+      if (window.showToast) window.showToast('Please paste your text in the Description box first.', 'warning');
+      return;
+    }
+
+    const lines = description.split('\n');
+    let formattedHtml = '';
+    let inList = false;
+
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        if (inList) {
+          formattedHtml += '</ul>\n';
+          inList = false;
+        }
+        return;
+      }
+
+      // Check for bullet points or numbered items
+      if (/^[•\-\*]\s+/.test(trimmed) || /^\d+[\.\)]\s+/.test(trimmed)) {
+        const listText = trimmed.replace(/^[•\-\*]\s+/, '').replace(/^\d+[\.\)]\s+/, '');
+        if (!inList) {
+          formattedHtml += '<ul>\n';
+          inList = true;
+        }
+        formattedHtml += `  <li>${listText}</li>\n`;
+        return;
+      }
+
+      if (inList) {
+        formattedHtml += '</ul>\n';
+        inList = false;
+      }
+
+      // Check for headings (short lines without ending period, or bold/numbered topics)
+      const isHeading = (
+        (trimmed.length <= 60 && !trimmed.endsWith('.')) ||
+        /^(Introduction|What is|Types of|Working Principle|Advantages|Features|Specifications|Conclusion|Summary|Calculations|Example:)/i.test(trimmed)
+      );
+
+      if (isHeading) {
+        formattedHtml += `\n<h2>${trimmed}</h2>\n`;
+      } else {
+        formattedHtml += `<p>${trimmed}</p>\n`;
+      }
+    });
+
+    if (inList) {
+      formattedHtml += '</ul>\n';
+    }
+
+    setDescription(formattedHtml.trim());
+    if (window.showToast) {
+      window.showToast('Word document formatted with H2 headings, lists & paragraphs!', 'success');
+    }
+  };
+
+  const insertFormatting = (startTag, endTag) => {
+    const textarea = document.getElementById('form-description');
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = description.substring(start, end) || 'Sample text';
+    const replacement = startTag + selectedText + endTag;
+    const newDesc = description.substring(0, start) + replacement + description.substring(end);
+    setDescription(newDesc);
+  };
+
   // CRUD: Trigger Edit
   const handleEditTrigger = (post) => {
     setPostId(post.id);
@@ -597,12 +668,60 @@ export default function AdminPortal() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="form-description">Description / Technical Notes (HTML markup allowed)</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                    <label htmlFor="form-description" style={{ marginBottom: 0 }}>Description / Technical Notes</label>
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary"
+                      style={{ padding: '5px 12px', fontSize: '12px', background: 'hsla(var(--primary), 0.15)', color: 'hsl(var(--primary))', borderColor: 'hsla(var(--primary), 0.4)' }}
+                      onClick={autoFormatDescription}
+                      title="Automatically format pasted text into HTML headings, paragraphs, and lists"
+                    >
+                      <i className="fa-solid fa-wand-magic-sparkles"></i> Auto-Format Word Document
+                    </button>
+                  </div>
+
+                  {/* Formatting Toolbar */}
+                  <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', background: 'hsl(var(--bg-dark))', padding: '6px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid hsl(var(--border-color))', flexWrap: 'wrap' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => insertFormatting('<h2>', '</h2>')} 
+                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                      title="Insert Heading 2"
+                    >
+                      H2
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => insertFormatting('<h3>', '</h3>')} 
+                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                      title="Insert Subheading 3"
+                    >
+                      H3
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => insertFormatting('<strong>', '</strong>')} 
+                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                      title="Bold Text"
+                    >
+                      <i className="fa-solid fa-bold"></i> Bold
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => insertFormatting('<ul>\n  <li>', '</li>\n</ul>')} 
+                      style={{ background: 'hsl(var(--bg-card))', border: '1px solid hsl(var(--border-color))', color: 'hsl(var(--text-primary))', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                      title="Insert Bullet List"
+                    >
+                      <i className="fa-solid fa-list-ul"></i> Bullet List
+                    </button>
+                  </div>
+
                   <textarea 
                     id="form-description" 
                     className="form-control" 
-                    style={{ minHeight: '120px' }} 
-                    placeholder="Add details, chip models, and instructions..." 
+                    style={{ minHeight: '180px', fontFamily: 'monospace', fontSize: '13px' }} 
+                    placeholder="Paste or type details, instructions, or MS Word text here..." 
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
