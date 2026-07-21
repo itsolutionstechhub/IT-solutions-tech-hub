@@ -274,7 +274,7 @@ export default function AdminPortal() {
       const range = selection.getRangeAt(0);
       // Ensure range is inside the editor box
       if (editorRef.current && editorRef.current.contains(range.commonAncestorContainer)) {
-        savedRangeRef.current = range;
+        savedRangeRef.current = range.cloneRange();
       }
     }
   };
@@ -779,7 +779,6 @@ export default function AdminPortal() {
                     {/* Headings Dropdown */}
                     <select 
                       onChange={(e) => executeCommand('formatBlock', e.target.value)}
-                      onMouseDown={(e) => e.preventDefault()}
                       style={{
                         background: 'hsl(var(--bg-dark))',
                         border: '1px solid hsl(var(--border-color))',
@@ -793,11 +792,11 @@ export default function AdminPortal() {
                       }}
                       title="Paragraph Format / Heading"
                     >
-                      <option value="<p>">Normal Text</option>
-                      <option value="<h2>">Heading 2</option>
-                      <option value="<h3>">Heading 3</option>
-                      <option value="<h4>">Heading 4</option>
-                      <option value="<blockquote>">Blockquote</option>
+                      <option value="p">Normal Text</option>
+                      <option value="h2">Heading 2</option>
+                      <option value="h3">Heading 3</option>
+                      <option value="h4">Heading 4</option>
+                      <option value="blockquote">Blockquote</option>
                     </select>
 
                     {/* Line Spacing Dropdown */}
@@ -806,7 +805,6 @@ export default function AdminPortal() {
                         applyLineHeight(e.target.value);
                         e.target.value = ''; // reset selection
                       }}
-                      onMouseDown={(e) => e.preventDefault()}
                       style={toolbarDropdownStyle}
                       title="Line Spacing"
                     >
@@ -848,7 +846,6 @@ export default function AdminPortal() {
                         executeCommand('foreColor', e.target.value);
                         e.target.value = ''; // reset selection
                       }}
-                      onMouseDown={(e) => e.preventDefault()}
                       style={toolbarDropdownStyle}
                       title="Text Color"
                     >
@@ -869,7 +866,6 @@ export default function AdminPortal() {
                         executeCommand('hiliteColor', e.target.value);
                         e.target.value = ''; // reset selection
                       }}
-                      onMouseDown={(e) => e.preventDefault()}
                       style={toolbarDropdownStyle}
                       title="Highlight Background Color"
                     >
