@@ -10,14 +10,25 @@ function isAuthorized(request) {
   return authLower === securePassword.toLowerCase().trim() || authLower === 'admin';
 }
 
+// Dynamically resolve repository default branch (main or master)
+async function getBranch(octokit, owner, repo) {
+  if (process.env.GITHUB_BRANCH) return process.env.GITHUB_BRANCH;
+  try {
+    const { data } = await octokit.repos.get({ owner, repo });
+    return data.default_branch || 'main';
+  } catch (err) {
+    return 'main';
+  }
+}
+
 // Helper to fetch file content and SHA from GitHub
-async function getGitHubFile(octokit, path) {
+async function getGitHubFile(octokit, owner, repo, branch, path) {
   try {
     const { data } = await octokit.repos.getContent({
-      owner: process.env.GITHUB_OWNER,
-      repo: process.env.GITHUB_REPO,
-      path: path,
-      ref: 'main',
+      owner,
+      repo,
+      path,
+      ref: branch,
     });
     
     // Content is returned as base64
@@ -34,7 +45,7 @@ async function getGitHubFile(octokit, path) {
 // POST endpoint to Create or Update a post
 export async function POST(request) {
   if (!isAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized: Passcode mismatch' }, { status: 401 });
   }
 
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -43,7 +54,7 @@ export async function POST(request) {
 
   if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
     return NextResponse.json(
-      { error: 'GitHub credentials are not configured on the server.' },
+      { error: 'GitHub environment variables (GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO) are missing on Vercel.' },
       { status: 500 }
     );
   }
@@ -51,6 +62,7 @@ export async function POST(request) {
   try {
     const postData = await request.json();
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    const targetBranch = await getBranch(octokit, GITHUB_OWNER, GITHUB_REPO);
 
     // 1. Process and upload base64 images to GitHub
     const finalImages = ["", "", "", ""];
@@ -60,7 +72,6 @@ export async function POST(request) {
       const img = postData.images?.[i] || "";
       
       if (img.startsWith('data:image')) {
-        // Base64 image needs to be uploaded to GitHub
         const matches = img.match(/^data:image\/(\w+);base64,(.+)$/);
         if (matches && matches.length === 3) {
           const ext = matches[1];
@@ -68,13 +79,9 @@ export async function POST(request) {
           
           const filename = `${postData.id}-${i}-${Date.now()}.${ext}`;
           const githubPath = `public/images/posts/${filename}`;
-          
-          console.log(`Uploading image ${i + 1} to GitHub path: ${githubPath}`);
 
-          // Fetch image SHA if it somehow exists (it won't for new files)
-          const { sha } = await getGitHubFile(octokit, githubPath);
+          const { sha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, githubPath);
 
-          // Queue upload
           const uploadPromise = octokit.repos.createOrUpdateFileContents({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
@@ -82,34 +89,29 @@ export async function POST(request) {
             message: `Upload image ${i + 1} for post: ${postData.title}`,
             content: base64Data,
             sha: sha || undefined,
-            branch: 'main',
+            branch: targetBranch,
           }).then(() => {
-            // Public path inside next.js public directory resolves relative to /
             finalImages[i] = `/images/posts/${filename}`;
           });
 
           imagePromises.push(uploadPromise);
         }
       } else {
-        // Keep existing external URL or empty string
         finalImages[i] = img;
       }
     }
 
-    // Wait for all image uploads to complete
     await Promise.all(imagePromises);
 
-    // Filter clean images array
     const cleanImages = finalImages.filter(img => img !== "");
     const coverImage = cleanImages[0] || "/images/posts/default.png";
 
-    // Set updated image properties on postData
     postData.image = coverImage;
     postData.images = cleanImages.length > 0 ? cleanImages : [coverImage];
 
     // 2. Read, update and commit content/posts.json
     const postsFilePath = 'content/posts.json';
-    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, postsFilePath);
+    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
     
     let postsList = [];
     if (postsJsonContent) {
@@ -119,19 +121,15 @@ export async function POST(request) {
     const existingIndex = postsList.findIndex(p => p.id === postData.id);
 
     if (existingIndex !== -1) {
-      // Update existing post
-      // Preserve dynamic properties if editing via admin form
       postData.views = postsList[existingIndex].views || 0;
       postData.createdAt = postsList[existingIndex].createdAt || new Date().toISOString();
       postsList[existingIndex] = postData;
     } else {
-      // Insert new post at the top
       postData.views = 0;
       postData.createdAt = new Date().toISOString();
       postsList.unshift(postData);
     }
 
-    // Write updated posts list back to GitHub
     const updatedContentStr = JSON.stringify(postsList, null, 2);
     
     await octokit.repos.createOrUpdateFileContents({
@@ -141,13 +139,18 @@ export async function POST(request) {
       message: existingIndex !== -1 ? `Update post: ${postData.title}` : `Create post: ${postData.title}`,
       content: Buffer.from(updatedContentStr).toString('base64'),
       sha: postsJsonSha || undefined,
-      branch: 'main',
+      branch: targetBranch,
     });
 
     return NextResponse.json({ success: true, post: postData });
 
   } catch (error) {
     console.error('API Error:', error);
+    if (error.status === 404) {
+      return NextResponse.json({ 
+        error: `GitHub API 404 Error: Repository '${GITHUB_OWNER}/${GITHUB_REPO}' was not found, or GITHUB_TOKEN lacks 'Contents: Read & Write' permission.` 
+      }, { status: 500 });
+    }
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -178,8 +181,9 @@ export async function DELETE(request) {
     }
 
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    const targetBranch = await getBranch(octokit, GITHUB_OWNER, GITHUB_REPO);
     const postsFilePath = 'content/posts.json';
-    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, postsFilePath);
+    const { content: postsJsonContent, sha: postsJsonSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, postsFilePath);
 
     if (!postsJsonContent) {
       return NextResponse.json({ error: 'Posts database file not found on GitHub.' }, { status: 404 });
@@ -192,7 +196,6 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Post ID not found in database.' }, { status: 404 });
     }
 
-    // Write updated posts list back to GitHub
     const updatedContentStr = JSON.stringify(filteredList, null, 2);
     
     await octokit.repos.createOrUpdateFileContents({
@@ -202,13 +205,18 @@ export async function DELETE(request) {
       message: `Delete post ID: ${postId}`,
       content: Buffer.from(updatedContentStr).toString('base64'),
       sha: postsJsonSha,
-      branch: 'main',
+      branch: targetBranch,
     });
 
     return NextResponse.json({ success: true, deletedId: postId });
 
   } catch (error) {
     console.error('API Error:', error);
+    if (error.status === 404) {
+      return NextResponse.json({ 
+        error: `GitHub API 404 Error: Repository '${GITHUB_OWNER}/${GITHUB_REPO}' was not found, or GITHUB_TOKEN lacks 'Contents: Read & Write' permission.` 
+      }, { status: 500 });
+    }
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }

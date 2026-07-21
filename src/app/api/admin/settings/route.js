@@ -10,14 +10,25 @@ function isAuthorized(request) {
   return authLower === securePassword.toLowerCase().trim() || authLower === 'admin';
 }
 
+// Dynamically resolve repository default branch (main or master)
+async function getBranch(octokit, owner, repo) {
+  if (process.env.GITHUB_BRANCH) return process.env.GITHUB_BRANCH;
+  try {
+    const { data } = await octokit.repos.get({ owner, repo });
+    return data.default_branch || 'main';
+  } catch (err) {
+    return 'main';
+  }
+}
+
 // Helper to fetch file content and SHA from GitHub
-async function getGitHubFile(octokit, path) {
+async function getGitHubFile(octokit, owner, repo, branch, path) {
   try {
     const { data } = await octokit.repos.getContent({
-      owner: process.env.GITHUB_OWNER,
-      repo: process.env.GITHUB_REPO,
-      path: path,
-      ref: 'main',
+      owner,
+      repo,
+      path,
+      ref: branch,
     });
     
     const content = Buffer.from(data.content, 'base64').toString('utf8');
@@ -33,7 +44,7 @@ async function getGitHubFile(octokit, path) {
 // POST endpoint to update settings
 export async function POST(request) {
   if (!isAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized: Passcode mismatch' }, { status: 401 });
   }
 
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -42,7 +53,7 @@ export async function POST(request) {
 
   if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
     return NextResponse.json(
-      { error: 'GitHub credentials are not configured on the server.' },
+      { error: 'GitHub environment variables (GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO) are missing on Vercel.' },
       { status: 500 }
     );
   }
@@ -50,12 +61,11 @@ export async function POST(request) {
   try {
     const newSettings = await request.json();
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    const targetBranch = await getBranch(octokit, GITHUB_OWNER, GITHUB_REPO);
     const settingsFilePath = 'content/settings.json';
 
-    // Fetch current settings SHA if it exists
-    const { sha: settingsSha } = await getGitHubFile(octokit, settingsFilePath);
+    const { sha: settingsSha } = await getGitHubFile(octokit, GITHUB_OWNER, GITHUB_REPO, targetBranch, settingsFilePath);
 
-    // Commit updated settings to GitHub
     const updatedContentStr = JSON.stringify(newSettings, null, 2);
 
     await octokit.repos.createOrUpdateFileContents({
@@ -65,13 +75,18 @@ export async function POST(request) {
       message: 'Update dynamic site configurations',
       content: Buffer.from(updatedContentStr).toString('base64'),
       sha: settingsSha || undefined,
-      branch: 'main',
+      branch: targetBranch,
     });
 
     return NextResponse.json({ success: true, settings: newSettings });
 
   } catch (error) {
     console.error('API Error:', error);
+    if (error.status === 404) {
+      return NextResponse.json({ 
+        error: `GitHub API 404 Error: Repository '${GITHUB_OWNER}/${GITHUB_REPO}' was not found, or GITHUB_TOKEN lacks 'Contents: Read & Write' permission.` 
+      }, { status: 500 });
+    }
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
