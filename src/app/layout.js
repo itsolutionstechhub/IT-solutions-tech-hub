@@ -7,7 +7,7 @@ import ToastContainer from '../components/ToastContainer';
 import settings from '../../content/settings.json';
 
 export const metadata = {
-  title: settings.siteName || "IT Solutions Pro",
+  title: `${settings.siteName || "IT Solutions Pro"} | Premium Tech News, Guides & Software Tools`,
   description: settings.heroDesc || "Premium resources for laptop repair technicians. Download BIOS bin files, boardview files, schematics, and specialized technician software. Shop repair gear online.",
   icons: {
     icon: '/favicon.png',
