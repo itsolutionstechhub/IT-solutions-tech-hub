@@ -595,23 +595,29 @@ export default function AdminPortal() {
         </div>
 
         {/* Dashboard Statistics Overview */}
-        <div className="stats-cluster" style={{ margin: 0, gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        <div className="stats-cluster" style={{ margin: 0, gridTemplateColumns: `repeat(${1 + [settingsData.showNews !== false, settingsData.showRepair !== false, settingsData.showStore !== false].filter(Boolean).length}, 1fr)` }}>
           <div className="stat-card" style={{ padding: '16px' }}>
             <div className="stat-val" style={{ fontSize: '24px' }}>{totalPosts}</div>
             <div className="stat-lbl" style={{ fontSize: '11px' }}>Total Posts</div>
           </div>
-          <div className="stat-card" style={{ padding: '16px' }}>
-            <div className="stat-val" style={{ fontSize: '24px' }}>{newsCount}</div>
-            <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.techNewsLabel || "Tech News"}</div>
-          </div>
-          <div className="stat-card" style={{ padding: '16px' }}>
-            <div className="stat-val" style={{ fontSize: '24px' }}>{repairCount}</div>
-            <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.repairArticlesLabel || "Repair Articles"}</div>
-          </div>
-          <div className="stat-card" style={{ padding: '16px' }}>
-            <div className="stat-val" style={{ fontSize: '24px' }}>{storeCount}</div>
-            <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.storeLabel || "Store"}</div>
-          </div>
+          {settingsData.showNews !== false && (
+            <div className="stat-card" style={{ padding: '16px' }}>
+              <div className="stat-val" style={{ fontSize: '24px' }}>{newsCount}</div>
+              <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.techNewsLabel || "Tech News"}</div>
+            </div>
+          )}
+          {settingsData.showRepair !== false && (
+            <div className="stat-card" style={{ padding: '16px' }}>
+              <div className="stat-val" style={{ fontSize: '24px' }}>{repairCount}</div>
+              <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.repairArticlesLabel || "Repair Articles"}</div>
+            </div>
+          )}
+          {settingsData.showStore !== false && (
+            <div className="stat-card" style={{ padding: '16px' }}>
+              <div className="stat-val" style={{ fontSize: '24px' }}>{storeCount}</div>
+              <div className="stat-lbl" style={{ fontSize: '11px' }}>{settingsData.storeLabel || "Store"}</div>
+            </div>
+          )}
         </div>
 
         {/* ================= TAB 1: MANAGE POSTS ================= */}
@@ -635,8 +641,6 @@ export default function AdminPortal() {
                   >
                     <option value="" disabled>Select Category</option>
                     <option value="tech-news">{settingsData.techNewsLabel || "Tech News"}</option>
-                    <option value="repair-articles">{settingsData.repairArticlesLabel || "Repair Articles"}</option>
-                    <option value="store">{settingsData.storeLabel || "Store"}</option>
                   </select>
                 </div>
 

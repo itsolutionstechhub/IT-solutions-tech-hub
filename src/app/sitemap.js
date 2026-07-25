@@ -13,12 +13,16 @@ function generateSlug(title) {
 }
 
 export default async function sitemap() {
+  const showNews = settings.showNews !== false;
+  const showRepair = settings.showRepair !== false;
+  const showStore = settings.showStore !== false;
+
   // Core Static Pages
   const staticPages = [
     { url: `${BASE_URL}/`, changeFrequency: 'daily', priority: 1.0 },
-    { url: `${BASE_URL}/tech-news`, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/repair-articles`, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/store`, changeFrequency: 'daily', priority: 0.8 },
+    ...(showNews ? [{ url: `${BASE_URL}/tech-news`, changeFrequency: 'daily', priority: 0.8 }] : []),
+    ...(showRepair ? [{ url: `${BASE_URL}/repair-articles`, changeFrequency: 'daily', priority: 0.8 }] : []),
+    ...(showStore ? [{ url: `${BASE_URL}/store`, changeFrequency: 'daily', priority: 0.8 }] : []),
     { url: `${BASE_URL}/about-us`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/contact-us`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/privacy-policy`, changeFrequency: 'monthly', priority: 0.3 },
@@ -26,8 +30,16 @@ export default async function sitemap() {
     { url: `${BASE_URL}/disclaimer`, changeFrequency: 'monthly', priority: 0.3 },
   ];
 
+  // Filter posts based on active categories
+  const filteredPosts = posts.filter(post => {
+    if (post.category === 'repair-articles' && !showRepair) return false;
+    if (post.category === 'store' && !showStore) return false;
+    if (post.category === 'tech-news' && !showNews) return false;
+    return true;
+  });
+
   // Dynamic Post Pages
-  const postUrls = posts.map(post => {
+  const postUrls = filteredPosts.map(post => {
     const slug = generateSlug(post.title);
     return {
       url: `${BASE_URL}/posts/${post.id}/${slug}`,

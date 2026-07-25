@@ -19,8 +19,8 @@ export default function Header() {
   return (
     <header id="main-header">
       <div className="container header-container">
-        <Link href="/" className="logo" id="logo-btn">
-          <i className={settings.logoIcon || "fa-solid fa-microchip"} id="header-logo-icon"></i>
+        <Link href="/" className="logo" id="logo-btn" style={{ gap: '8px' }}>
+          <img src="/logo.png" alt="Logo" id="header-logo-icon" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
           <span id="header-logo-text">{settings.logoText || "IT Solutions Pro"}</span>
         </Link>
 

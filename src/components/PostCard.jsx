@@ -142,9 +142,15 @@ export default function PostCard({ post }) {
           {stripHtml(post.description)}
         </p>
         
-        <Link href={detailLink} className="btn-read-more">
-          More Details <i className="fa-solid fa-chevron-right"></i>
-        </Link>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: (showSpecs && (isStore || isRepair)) ? '16px' : '0', width: '100%', marginTop: 'auto' }}>
+          <Link href={detailLink} className="btn-read-more" style={{ margin: 0 }}>
+            More Details <i className="fa-solid fa-chevron-right"></i>
+          </Link>
+          <span style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
+            <i className="fa-solid fa-eye" style={{ color: 'hsl(var(--primary))' }}></i>
+            {post.views || 0} views
+          </span>
+        </div>
         
         {/* Specifications Grid */}
         {showSpecs && (

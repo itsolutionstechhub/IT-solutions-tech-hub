@@ -19,8 +19,8 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-col">
-            <Link href="/" className="logo" id="footer-logo-btn" style={{ marginBottom: '14px' }}>
-              <i className={settings.logoIcon || "fa-solid fa-microchip"} id="footer-logo-icon"></i>
+            <Link href="/" className="logo" id="footer-logo-btn" style={{ marginBottom: '14px', gap: '8px' }}>
+              <img src="/logo.png" alt="Logo" id="footer-logo-icon" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
               <span id="footer-logo-text">{settings.logoText || "IT Solutions Pro"}</span>
             </Link>
             <p id="footer-branding-desc">

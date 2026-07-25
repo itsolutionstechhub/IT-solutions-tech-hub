@@ -10,7 +10,7 @@ export const metadata = {
   title: settings.siteName || "IT Solutions Pro",
   description: settings.heroDesc || "Premium resources for laptop repair technicians. Download BIOS bin files, boardview files, schematics, and specialized technician software. Shop repair gear online.",
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.png',
   },
 };
 
