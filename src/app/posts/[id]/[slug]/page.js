@@ -3,6 +3,7 @@ import settings from '../../../../../content/settings.json';
 import posts from '../../../../../content/posts.json';
 import DetailCarousel from '../../../../components/DetailCarousel';
 import BackButton from '../../../../components/BackButton';
+import ViewCounter from '../../../../components/ViewCounter';
 
 // Helper to generate slug for comparison
 function generateSlug(title) {
@@ -109,6 +110,7 @@ export default function PostDetail({ params }) {
               <i className="fa-solid fa-calendar-days" style={{ color: 'hsl(var(--primary))', marginRight: '6px' }}></i> 
               Published: {formattedDate}
             </span>
+            <ViewCounter postId={post.id} initialViews={post.views || 0} mode="detail" />
           </div>
         </div>
 

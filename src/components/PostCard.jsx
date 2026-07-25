@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import settings from '../../content/settings.json';
+import ViewCounter from './ViewCounter';
 
 // Helper to strip HTML tags for card description snippets
 function stripHtml(html) {
@@ -146,10 +147,7 @@ export default function PostCard({ post }) {
           <Link href={detailLink} className="btn-read-more" style={{ margin: 0 }}>
             More Details <i className="fa-solid fa-chevron-right"></i>
           </Link>
-          <span style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
-            <i className="fa-solid fa-eye" style={{ color: 'hsl(var(--primary))' }}></i>
-            {post.views || 0} views
-          </span>
+          <ViewCounter postId={post.id} initialViews={post.views || 0} mode="card" />
         </div>
         
         {/* Specifications Grid */}
