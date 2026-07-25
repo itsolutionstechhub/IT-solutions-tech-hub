@@ -36,7 +36,7 @@ export async function generateMetadata({ params }) {
     title: `${post.title} - ${settings.siteName || "IT Solutions Pro"}`,
     description: cleanDesc,
     alternates: {
-      canonical: `/posts/${post.id}/${params.slug}`,
+      canonical: `https://itsolutionspro.net/posts/${post.id}/${params.slug}`,
     },
     openGraph: {
       title: post.title,
