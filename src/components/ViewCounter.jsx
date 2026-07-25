@@ -10,12 +10,13 @@ export default function ViewCounter({ postId, initialViews = 0, mode = 'card' })
   useEffect(() => {
     if (!postId) return;
 
-    const docRef = doc(db, 'post_views', postId);
+    // Use the existing 'posts' collection which is already authorized in Firebase Rules
+    const docRef = doc(db, 'posts', postId);
 
     // 1. Listen for real-time updates from Firestore
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        setViews(docSnap.data().count || 0);
+        setViews(docSnap.data().views || 0);
       } else {
         setViews(initialViews);
       }
@@ -34,12 +35,12 @@ export default function ViewCounter({ postId, initialViews = 0, mode = 'card' })
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
               await updateDoc(docRef, {
-                count: increment(1)
+                views: increment(1)
               });
             } else {
               await setDoc(docRef, {
-                count: initialViews + 1
-              });
+                views: initialViews + 1
+              }, { merge: true });
             }
             sessionStorage.setItem(sessionKey, 'true');
           } catch (error) {
