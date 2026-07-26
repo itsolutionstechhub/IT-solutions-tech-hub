@@ -50,7 +50,7 @@ export default function ContactUs() {
   return (
     <section id="view-contact-us" className="view-section active">
       <div className="section-header">
-        <h2 className="section-title">Get In Touch With Us</h2>
+        <h1 className="section-title">Get In Touch With Us</h1>
       </div>
       <div className="contact-grid">
         {/* Contact Form */}

@@ -9,6 +9,9 @@ export const metadata = {
 export default function Disclaimer() {
   return (
     <section id="view-disclaimer" className="view-section active">
+      <div className="section-header">
+        <h1 className="section-title">Legal Disclaimer</h1>
+      </div>
       <div 
         className="content-rich-box" 
         id="disclaimer-container"

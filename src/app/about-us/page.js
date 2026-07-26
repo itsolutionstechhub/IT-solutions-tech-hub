@@ -9,6 +9,9 @@ export const metadata = {
 export default function AboutUs() {
   return (
     <section id="view-about-us" className="view-section active">
+      <div className="section-header">
+        <h1 className="section-title">About Us</h1>
+      </div>
       <div 
         className="content-rich-box" 
         id="about-us-container"

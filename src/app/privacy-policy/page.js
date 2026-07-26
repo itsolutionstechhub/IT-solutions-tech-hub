@@ -9,6 +9,9 @@ export const metadata = {
 export default function PrivacyPolicy() {
   return (
     <section id="view-privacy-policy" className="view-section active">
+      <div className="section-header">
+        <h1 className="section-title">Privacy Policy</h1>
+      </div>
       <div 
         className="content-rich-box" 
         id="privacy-policy-container"

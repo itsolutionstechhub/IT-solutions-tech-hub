@@ -9,6 +9,9 @@ export const metadata = {
 export default function TermsConditions() {
   return (
     <section id="view-terms-conditions" className="view-section active">
+      <div className="section-header">
+        <h1 className="section-title">Terms & Conditions</h1>
+      </div>
       <div 
         className="content-rich-box" 
         id="terms-conditions-container"

@@ -34,7 +34,7 @@ export default function TechNews() {
   return (
     <section id="view-tech-news" className="view-section active">
       <div className="section-header" id="news-title-header">
-        <h2 className="section-title">Latest {settings.techNewsLabel || "Tech News"}</h2>
+        <h1 className="section-title">Latest {settings.techNewsLabel || "Tech News"}</h1>
       </div>
 
       <div className="grid-layout" id="tech-news-grid">
