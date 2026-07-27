@@ -84,7 +84,6 @@ export default function PostCard({ post }) {
 
   // Download Link Configuration
   const hasDownload = post.downloadLink && post.downloadLink !== '#';
-  const dlLink = hasDownload ? post.downloadLink : '#';
 
   const slug = generateSlug(post.title);
   const detailLink = `/posts/${post.id}/${slug}`;
@@ -202,21 +201,27 @@ export default function PostCard({ post }) {
               </>
             ) : (
               <>
-                <a 
-                  href={dlLink} 
-                  className="btn btn-primary" 
-                  onClick={(e) => {
-                    if (!hasDownload) {
-                      e.preventDefault();
+                {hasDownload ? (
+                  <a 
+                    href={post.downloadLink} 
+                    className="btn btn-primary" 
+                    download
+                  >
+                    <i className="fa-solid fa-cloud-arrow-down"></i> Download
+                  </a>
+                ) : (
+                  <button 
+                    type="button" 
+                    className="btn btn-primary" 
+                    onClick={() => {
                       if (window.showToast) {
                         window.showToast('Downloading file has started... (Mock link)', 'success');
                       }
-                    }
-                  }}
-                  download={hasDownload}
-                >
-                  <i className="fa-solid fa-cloud-arrow-down"></i> {hasDownload ? 'Download' : 'Download Now'}
-                </a>
+                    }}
+                  >
+                    <i className="fa-solid fa-cloud-arrow-down"></i> Download Now
+                  </button>
+                )}
                 {post.link && post.link !== '#' && (
                   <a href={post.link} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '10px 14px' }} title="Official Source">
                     <i className="fa-solid fa-arrow-up-right-from-square"></i>

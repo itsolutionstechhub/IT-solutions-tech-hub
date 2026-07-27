@@ -216,14 +216,29 @@ export default function PostDetail({ params }) {
                   )}
 
                   <div id="detail-actions-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <a 
-                      href={hasDownload ? post.downloadLink : '#'} 
-                      className="btn btn-primary" 
-                      style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
-                      download={hasDownload}
-                    >
-                      <i className="fa-solid fa-cloud-arrow-down"></i> {hasDownload ? 'Download File Asset' : 'Download File Now'}
-                    </a>
+                    {hasDownload ? (
+                      <a 
+                        href={post.downloadLink} 
+                        className="btn btn-primary" 
+                        style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
+                        download
+                      >
+                        <i className="fa-solid fa-cloud-arrow-down"></i> Download File Asset
+                      </a>
+                    ) : (
+                      <button 
+                        type="button" 
+                        className="btn btn-primary" 
+                        style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
+                        onClick={() => {
+                          if (window.showToast) {
+                            window.showToast('Downloading file has started... (Mock link)', 'success');
+                          }
+                        }}
+                      >
+                        <i className="fa-solid fa-cloud-arrow-down"></i> Download File Now
+                      </button>
+                    )}
                     {post.link && post.link !== '#' && (
                       <a href={post.link} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
                         <i className="fa-solid fa-arrow-up-right-from-square"></i> Visit Official Source

@@ -239,3 +239,11 @@ export async function DELETE(request) {
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
+
+// GET endpoint to verify passcode
+export async function GET(request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized: Passcode mismatch' }, { status: 401 });
+  }
+  return NextResponse.json({ success: true, authorized: true });
+}

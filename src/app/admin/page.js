@@ -65,8 +65,8 @@ export default function AdminPortal() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [sourceLink, setSourceLink] = useState('#');
-  const [downloadLink, setDownloadLink] = useState('#');
+  const [sourceLink, setSourceLink] = useState('');
+  const [downloadLink, setDownloadLink] = useState('');
   
   // Image Upload Slot States
   const [imageSlots, setImageSlots] = useState(['', '', '', '']);
@@ -126,9 +126,32 @@ export default function AdminPortal() {
     }
   }, []);
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (passcode.trim()) {
+    if (!passcode.trim()) {
+      if (window.showToast) {
+        window.showToast('Access Denied! Passcode cannot be empty.', 'danger');
+      }
+      setPasscode('');
+      return;
+    }
+
+    if (window.showToast) {
+      window.showToast('Verifying admin passcode...', 'info');
+    }
+
+    try {
+      const response = await fetch('/api/admin/posts', {
+        method: 'GET',
+        headers: {
+          'admin-passcode': passcode.trim()
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Passcode mismatch');
+      }
+
       sessionStorage.setItem('isAdminAuthenticated', 'true');
       sessionStorage.setItem('adminPasscode', passcode.trim());
       setIsAuthenticated(true);
@@ -136,9 +159,9 @@ export default function AdminPortal() {
       if (window.showToast) {
         window.showToast('Access Unlocked. Welcome back, Administrator!', 'success');
       }
-    } else {
+    } catch (err) {
       if (window.showToast) {
-        window.showToast('Access Denied! Passcode cannot be empty.', 'danger');
+        window.showToast('Access Denied! Incorrect admin passcode.', 'danger');
       }
       setPasscode('');
     }
@@ -221,8 +244,8 @@ export default function AdminPortal() {
     setTitle('');
     setDescription('');
     setPrice('');
-    setSourceLink('#');
-    setDownloadLink('#');
+    setSourceLink('');
+    setDownloadLink('');
     setImageSlots(['', '', '', '']);
     setActiveSlot(0);
     setExternalUrl('');
@@ -313,8 +336,8 @@ export default function AdminPortal() {
     setTitle(post.title);
     setDescription(post.description);
     setPrice(post.price || '');
-    setSourceLink(post.link || '#');
-    setDownloadLink(post.downloadLink || '#');
+    setSourceLink(post.link || '');
+    setDownloadLink(post.downloadLink || '');
     
     // Load images array
     const nextSlots = ['', '', '', ''];
