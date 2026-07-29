@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { redirect, permanentRedirect } from 'next/navigation';
 import posts from '../../../../content/posts.json';
 
 function generateSlug(title) {
@@ -22,5 +22,5 @@ export default function PostRedirect({ params }) {
     redirect('/');
   }
   const slug = generateSlug(post.title);
-  redirect(`/posts/${post.id}/${slug}`);
+  permanentRedirect(`/posts/${post.id}/${slug}`);
 }

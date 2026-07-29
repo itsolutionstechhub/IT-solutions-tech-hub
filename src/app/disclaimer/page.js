@@ -4,6 +4,9 @@ import settings from '../../../content/settings.json';
 export const metadata = {
   title: `Legal Disclaimer - ${settings.siteName || "IT Solutions Pro"}`,
   description: `Technical warning and legal disclaimers for flashing BIOS chips or performing hardware modifications on ${settings.siteName || "IT Solutions Pro"}.`,
+  alternates: {
+    canonical: '/disclaimer',
+  },
 };
 
 export default function Disclaimer() {

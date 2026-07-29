@@ -4,6 +4,9 @@ import settings from '../../../content/settings.json';
 export const metadata = {
   title: `Terms & Conditions - ${settings.siteName || "IT Solutions Pro"}`,
   description: `Terms and conditions for utilizing repair files, schematics, and tools on ${settings.siteName || "IT Solutions Pro"}.`,
+  alternates: {
+    canonical: '/terms-conditions',
+  },
 };
 
 export default function TermsConditions() {

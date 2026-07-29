@@ -4,6 +4,9 @@ import settings from '../../../content/settings.json';
 export const metadata = {
   title: `Privacy Policy - ${settings.siteName || "IT Solutions Pro"}`,
   description: `Privacy Policy and data practices for ${settings.siteName || "IT Solutions Pro"}.`,
+  alternates: {
+    canonical: '/privacy-policy',
+  },
 };
 
 export default function PrivacyPolicy() {

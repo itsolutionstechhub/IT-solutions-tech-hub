@@ -4,6 +4,9 @@ import settings from '../../../content/settings.json';
 export const metadata = {
   title: `About Us - ${settings.siteName || "IT Solutions Pro"}`,
   description: `About ${settings.siteName || "IT Solutions Pro"} - Our core mission, tech guides, and repair resources.`,
+  alternates: {
+    canonical: '/about-us',
+  },
 };
 
 export default function AboutUs() {
