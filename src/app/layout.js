@@ -22,6 +22,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Pinterest Domain Verification */}
+        <meta name="p:domain_verify" content="243fafa6d83f2880069abe513e04eeef"/>
+
         {/* FontAwesome Icons */}
         <link 
           rel="stylesheet" 
