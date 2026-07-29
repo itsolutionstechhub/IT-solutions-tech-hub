@@ -4,6 +4,7 @@ import posts from '../../../../../content/posts.json';
 import DetailCarousel from '../../../../components/DetailCarousel';
 import BackButton from '../../../../components/BackButton';
 import ViewCounter from '../../../../components/ViewCounter';
+import AdsterraBanner from '../../../../components/AdsterraBanner';
 
 // Helper to generate slug for comparison
 function generateSlug(title) {
@@ -248,10 +249,20 @@ export default function PostDetail({ params }) {
                 </>
               )}
 
+              {/* Adsterra Sidebar Banner */}
+              <div style={{ marginTop: '20px', borderTop: '1px solid hsl(var(--border-color))', paddingTop: '20px' }}>
+                <AdsterraBanner size="300x250" />
+              </div>
             </div>
           )}
         </div>
 
+        {/* Adsterra Bottom Banner (Only when sidebar is not shown) */}
+        {!showSpecs && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px', borderTop: '1px solid hsl(var(--border-color))', paddingTop: '20px' }}>
+            <AdsterraBanner size="300x250" />
+          </div>
+        )}
       </div>
     </section>
   );

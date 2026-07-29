@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import settings from '../../content/settings.json';
 import initialPosts from '../../content/posts.json';
 import PostCard from '../components/PostCard';
+import AdsterraBanner from '../components/AdsterraBanner';
 
 export default function Home() {
   const router = useRouter();
@@ -106,6 +107,12 @@ export default function Home() {
           <i className="fa-solid fa-magnifying-glass"></i>
         </div>
       </div>
+
+      {/* Adsterra Homepage Banner */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+        <AdsterraBanner size="300x250" />
+      </div>
+
       {/* Main Grid Title */}
       <div className="section-header" id="recent-resources-title" style={{ marginTop: '40px' }}>
         <h2 className="section-title">Recently Added Resources</h2>

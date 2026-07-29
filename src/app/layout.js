@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import CookieBanner from '../components/CookieBanner';
 import ToastContainer from '../components/ToastContainer';
 import settings from '../../content/settings.json';
+import AdsterraBanner from '../components/AdsterraBanner';
 
 export const metadata = {
   metadataBase: new URL('https://itsolutionspro.net'),
@@ -65,10 +66,23 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+
+        {/* Adsterra Social Bar */}
+        <script 
+          async 
+          src="https://pl30590919.effectivecpmnetwork.com/1d/a1/d4/1da1d43d05701712d88cd7be96ac1e80.js"
+        ></script>
       </head>
       <body>
         <Header />
         <main>
+          {/* Adsterra Responsive Header Banners */}
+          <div className="ad-desktop-wrapper">
+            <AdsterraBanner size="728x90" />
+          </div>
+          <div className="ad-mobile-wrapper">
+            <AdsterraBanner size="320x50" />
+          </div>
           <div className="container">
             {children}
           </div>

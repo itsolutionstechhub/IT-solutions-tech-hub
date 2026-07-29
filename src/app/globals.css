@@ -1883,3 +1883,28 @@ footer {
   font-style: italic;
   color: hsl(var(--text-secondary));
 }
+
+/* Adsterra Banners Responsive Display */
+.ad-desktop-wrapper {
+  display: none;
+  justify-content: center;
+  margin: 20px 0;
+}
+.ad-mobile-wrapper {
+  display: none;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+@media (min-width: 768px) {
+  .ad-desktop-wrapper {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ad-mobile-wrapper {
+    display: flex !important;
+  }
+}
+
