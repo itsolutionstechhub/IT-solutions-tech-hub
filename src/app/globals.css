@@ -1826,7 +1826,7 @@ footer {
   color: hsl(var(--text-secondary));
   font-size: 15px;
   line-height: 1.8;
-  white-space: pre-line;
+  white-space: normal;
   word-break: break-word;
 }
 
