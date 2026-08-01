@@ -4,17 +4,17 @@ import React, { useEffect, useRef } from 'react';
 
 const AD_CONFIGS = {
   '728x90': {
-    key: '90885e8f6e95eb759d4d361bd42cacee',
+    key: '30490421',
     width: 728,
     height: 90
   },
   '320x50': {
-    key: 'c5d6519a608f41f6d4b3a2988d993a0b',
+    key: '30490422',
     width: 320,
     height: 50
   },
   '300x250': {
-    key: '226c19d85e635ff0b3dff862533e78e0',
+    key: '30490423',
     width: 300,
     height: 250
   }

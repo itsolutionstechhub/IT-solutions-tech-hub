@@ -5,17 +5,15 @@ import Footer from '../components/Footer';
 import CookieBanner from '../components/CookieBanner';
 import ToastContainer from '../components/ToastContainer';
 import settings from '../../content/settings.json';
+import Script from 'next/script';
 import AdsterraBanner from '../components/AdsterraBanner';
 
 export const metadata = {
   metadataBase: new URL('https://itsolutionspro.net'),
-  title: `${settings.siteName || "IT Solutions Pro"} | Premium Tech News, Guides & Software Tools`,
+  title: settings.siteName || "IT Solutions Pro",
   description: settings.heroDesc || "Premium resources for laptop repair technicians. Download BIOS bin files, boardview files, schematics, and specialized technician software. Shop repair gear online.",
-  alternates: {
-    canonical: '/',
-  },
   icons: {
-    icon: '/favicon.png',
+    icon: '/favicon.svg',
   },
 };
 
@@ -23,9 +21,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Pinterest Domain Verification */}
-        <meta name="p:domain_verify" content="243fafa6d83f2880069abe513e04eeef"/>
-
         {/* FontAwesome Icons */}
         <link 
           rel="stylesheet" 
@@ -62,16 +57,10 @@ export default function RootLayout({ children }) {
                   c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
                   t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
                   y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-              })(window, document, "clarity", "script", "xs3fd7eqfv");
+               })(window, document, "clarity", "script", "xs3fd7eqfv");
             `,
           }}
         />
-
-        {/* Adsterra Social Bar */}
-        <script 
-          async 
-          src="https://pl30590919.effectivecpmnetwork.com/1d/a1/d4/1da1d43d05701712d88cd7be96ac1e80.js"
-        ></script>
       </head>
       <body>
         <Header />
@@ -90,6 +79,12 @@ export default function RootLayout({ children }) {
         <Footer />
         <CookieBanner />
         <ToastContainer />
+
+        {/* Adsterra Social Bar Script (Correct Placement ID: 30490420) */}
+        <Script 
+          src="https://pl30490420.effectivecpmnetwork.com/1d/a1/d4/1da1d43d05701712d88cd7be96ac1e80.js" 
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
