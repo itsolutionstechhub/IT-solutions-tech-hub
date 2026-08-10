@@ -49,10 +49,10 @@ export default function RootLayout({ children }) {
         {/* Google AdSense */}
         <script 
           async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4127818731395844"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5133605677668807"
           crossorigin="anonymous"
         ></script>
-        <meta name="google-adsense-account" content="ca-pub-4127818731395844" />
+        <meta name="google-adsense-account" content="ca-pub-5133605677668807" />
 
         {/* Microsoft Clarity Tracking Code */}
         <script
