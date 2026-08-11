@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Repair Articles & Download Center - IT Solutions Pro",
+  title: "Repair Tools & Download Center - IT Solutions Pro",
   description: "Access our repair guides, schematics, boardview files, and BIOS download center for professional laptop repair technicians.",
 };
 
