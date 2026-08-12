@@ -5,6 +5,8 @@ import DetailCarousel from '../../../../components/DetailCarousel';
 import BackButton from '../../../../components/BackButton';
 import ViewCounter from '../../../../components/ViewCounter';
 import AdsterraBanner from '../../../../components/AdsterraBanner';
+import DownloadCounter from '../../../../components/DownloadCounter';
+import DownloadButton from '../../../../components/DownloadButton';
 
 // Helper to generate slug for comparison
 function generateSlug(title) {
@@ -63,6 +65,7 @@ export default function PostDetail({ params }) {
   }
 
   const isStore = post.category === 'store';
+  const isRepair = post.category === 'repair-articles';
   const showSpecs = post.showSpecs !== false;
 
   // Format Category Badge
@@ -111,7 +114,11 @@ export default function PostDetail({ params }) {
               <i className="fa-solid fa-calendar-days" style={{ color: 'hsl(var(--primary))', marginRight: '6px' }}></i> 
               Published: {formattedDate}
             </span>
-            <ViewCounter postId={post.id} initialViews={post.views || 0} mode="detail" />
+            {isRepair ? (
+              <DownloadCounter postId={post.id} initialDownloads={post.downloads || 0} mode="detail" />
+            ) : (
+              <ViewCounter postId={post.id} initialViews={post.views || 0} mode="detail" />
+            )}
           </div>
         </div>
 
@@ -199,12 +206,7 @@ export default function PostDetail({ params }) {
                     <i className="fa-solid fa-circle-info"></i> Resource Specs
                   </h3>
 
-                  {post.metadata && (
                     <div id="detail-specs-container" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', borderBottom: '1px solid hsl(var(--border-color))', paddingBottom: '20px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
-                        <span style={{ color: 'hsl(var(--text-muted))' }}>Board Code</span>
-                        <span style={{ fontWeight: 600 }}>{post.metadata.board || "N/A"}</span>
-                      </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
                         <span style={{ color: 'hsl(var(--text-muted))' }}>File Info / Size</span>
                         <span style={{ fontWeight: 600 }}>{post.metadata.size || "N/A"}</span>
@@ -214,32 +216,9 @@ export default function PostDetail({ params }) {
                         <span style={{ fontWeight: 600 }}>{post.metadata.version || "V1.0"}</span>
                       </div>
                     </div>
-                  )}
 
                   <div id="detail-actions-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {hasDownload ? (
-                      <a 
-                        href={post.downloadLink} 
-                        className="btn btn-primary" 
-                        style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
-                        download
-                      >
-                        <i className="fa-solid fa-cloud-arrow-down"></i> Download File Asset
-                      </a>
-                    ) : (
-                      <button 
-                        type="button" 
-                        className="btn btn-primary" 
-                        style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
-                        onClick={() => {
-                          if (window.showToast) {
-                            window.showToast('Downloading file has started... (Mock link)', 'success');
-                          }
-                        }}
-                      >
-                        <i className="fa-solid fa-cloud-arrow-down"></i> Download File Now
-                      </button>
-                    )}
+                    <DownloadButton postId={post.id} downloadLink={post.downloadLink} />
                     {post.link && post.link !== '#' && (
                       <a href={post.link} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
                         <i className="fa-solid fa-arrow-up-right-from-square"></i> Visit Official Source

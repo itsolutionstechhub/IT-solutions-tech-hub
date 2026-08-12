@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import settings from '../../content/settings.json';
 import ViewCounter from './ViewCounter';
+import DownloadCounter from './DownloadCounter';
+import { incrementDownloadCount } from '../lib/dbHelpers';
 
 // Helper to strip HTML tags for card description snippets
 function stripHtml(html) {
@@ -138,7 +140,16 @@ export default function PostCard({ post }) {
 
       <div className="card-content">
         <h3 className="card-title">{post.title}</h3>
-        <p className="card-description" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', maxHeight: '4.8em', lineHeight: 1.6, marginBottom: '12px' }}>
+        <p className="card-description" style={{ 
+          display: '-webkit-box', 
+          WebkitLineClamp: (showSpecs && (isStore || isRepair)) ? 3 : 8, 
+          WebkitBoxOrient: 'vertical', 
+          overflow: 'hidden', 
+          textOverflow: 'ellipsis', 
+          maxHeight: (showSpecs && (isStore || isRepair)) ? '4.8em' : '12.8em', 
+          lineHeight: 1.6, 
+          marginBottom: '12px' 
+        }}>
           {stripHtml(post.description)}
         </p>
         
@@ -146,7 +157,11 @@ export default function PostCard({ post }) {
           <Link href={detailLink} className="btn-read-more" style={{ margin: 0 }}>
             More Details <i className="fa-solid fa-chevron-right"></i>
           </Link>
-          <ViewCounter postId={post.id} initialViews={post.views || 0} mode="card" />
+          {isRepair ? (
+            <DownloadCounter postId={post.id} initialDownloads={post.downloads || 0} mode="card" />
+          ) : (
+            <ViewCounter postId={post.id} initialViews={post.views || 0} mode="card" />
+          )}
         </div>
         
         {/* Specifications Grid */}
@@ -155,14 +170,10 @@ export default function PostCard({ post }) {
             {isRepair && post.metadata && (
               <div className="card-spec-grid">
                 <div className="spec-item">
-                  <div className="spec-label">Board Model</div>
-                  <div className="spec-value" title={post.metadata.board || "N/A"}>{post.metadata.board || "N/A"}</div>
-                </div>
-                <div className="spec-item">
                   <div className="spec-label">File Size</div>
                   <div className="spec-value">{post.metadata.size || "N/A"}</div>
                 </div>
-                <div className="spec-item" style={{ gridColumn: 'span 2' }}>
+                <div className="spec-item">
                   <div className="spec-label">Version / Tool</div>
                   <div className="spec-value">{post.metadata.version || "N/A"}</div>
                 </div>
@@ -205,6 +216,7 @@ export default function PostCard({ post }) {
                   <a 
                     href={post.downloadLink} 
                     className="btn btn-primary" 
+                    onClick={() => incrementDownloadCount(post.id)}
                     download
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download
@@ -214,6 +226,7 @@ export default function PostCard({ post }) {
                     type="button" 
                     className="btn btn-primary" 
                     onClick={() => {
+                      incrementDownloadCount(post.id);
                       if (window.showToast) {
                         window.showToast('Downloading file has started... (Mock link)', 'success');
                       }

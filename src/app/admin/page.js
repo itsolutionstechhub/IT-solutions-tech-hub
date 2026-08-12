@@ -781,11 +781,7 @@ export default function AdminPortal() {
 
                 {/* Dynamic Metadata Specs Grid */}
                 {category === 'repair-articles' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '12px' }}>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label>Board Code</label>
-                      <input type="text" className="form-control" placeholder="e.g. LA-E081P" value={metaBoard} onChange={(e) => setMetaBoard(e.target.value)} />
-                    </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '12px' }}>
                     <div className="form-group" style={{ marginBottom: 0 }}>
                       <label>File Info/Size</label>
                       <input type="text" className="form-control" placeholder="e.g. 16 MB" value={metaSize} onChange={(e) => setMetaSize(e.target.value)} />
@@ -946,7 +942,7 @@ export default function AdminPortal() {
                         if (post.category === "store") {
                           subDetail = <span style={{ color: 'hsl(var(--accent))', fontWeight: 700 }}>{post.price || "N/A"}</span>;
                         } else if (post.category === "repair-articles") {
-                          subDetail = post.metadata?.board || "N/A";
+                          subDetail = post.metadata?.version || "N/A";
                         } else {
                           subDetail = "News Item";
                         }
