@@ -663,7 +663,15 @@ export default function AdminPortal() {
                     required
                   >
                     <option value="" disabled>Select Category</option>
-                    <option value="tech-news">{settingsData.techNewsLabel || "Tech News"}</option>
+                    {settingsData.showNews !== false && (
+                      <option value="tech-news">{settingsData.techNewsLabel || "Tech News"}</option>
+                    )}
+                    {settingsData.showRepair !== false && (
+                      <option value="repair-articles">{settingsData.repairArticlesLabel || "Repair Tools"}</option>
+                    )}
+                    {settingsData.showStore !== false && (
+                      <option value="store">{settingsData.storeLabel || "Store"}</option>
+                    )}
                   </select>
                 </div>
 
