@@ -1,5 +1,27 @@
 [
   {
+    "id": "post-1787190935764",
+    "category": "repair-articles",
+    "title": "Epson L130 Resetter Free Download | Epson Adjustment Program (Waste Ink Pad Reset)",
+    "description": "Is your Epson L130 printer showing a **\"Service Required\"** error message, or are the red power and paper lights flashing alternately? This issue occurs when the printer's digital **waste ink pad counter** reaches 100% capacity. \n\nTo prevent ink leakage, Epson locks the printer. You can easily unlock your printer and reset the counter back to 0% at home using the **Epson L130 Resetter Software (Adjustment Program)**.\n\nYou do not need to take your printer to a service center or pay for physical pad replacements. This lightweight, verified utility will reset your Epson L130 motherboard memory within seconds.\n\n---\n\n### Features of Epson L130 Adjustment Program:\n\n* **Reset Waste Ink Pad Counter:** Fix the 100% limit lock in one click.\n* **Resolve Red Light Blinking:** Instantly clear alternate red light blinking errors.\n* **No Serial Key Required:** 100% free download, pre-activated, and ready to use.\n* **All Windows Support:** Fully compatible with Windows XP, 7, 8, 10, and Windows 11 (32-bit & 64-bit).\n* **Printhead Diagnostics:** Run printhead cleaning, nozzle checks, and alignment calibrations.\n\n---\n\n### How to Reset Epson L130 Printer (Step-by-Step):\n\nFollow these simple instructions to reset your printer's waste ink pad counter:\n\n1. Connect your Epson L130 printer to your computer using a USB cable and turn it ON.\n2. Download and extract the **Epson L130 Resetter zip file**.\n3. Run the **AdjProg.exe** application.\n4. Click on the **Select** button, choose **L130** in the model selection, and click **OK**.\n5. Click on the **Particular Adjustment Mode** button.\n6. Scroll down and double-click on **Waste Ink Pad Counter** (under the Maintenance section).\n7. Check the tick box next to **Main Pad Counter**.\n8. Click on the **Check** button to see your current counter points and percentage.\n9. Next, click on the **Initialization** button to clear the memory.\n10. Click **OK** on any pop-ups, and a prompt will ask you to **\"Turn Off the Printer\"**.\n11. Turn off your printer, click **OK**, and then turn the printer back ON.\n\nYour Epson L130 printer is now fully reset and ready to print!\n\nDownload the verified, virus-free **Epson L130 Resetter adjustment program zip** below and repair your printer instantly.",
+    "showSpecs": true,
+    "images": [
+      "/images/posts/post-1787190935764-0-1787190937978.jpeg",
+      "/images/posts/post-1787190935764-1-1787190938881.jpeg"
+    ],
+    "link": "",
+    "downloadLink": "https://mega.nz/file/ERolnajR#mnXb_EIcjKL5Ee6LiIDh4pLD3nRMzt6_qA9PDCkF13M",
+    "price": "",
+    "metadata": {
+      "board": "",
+      "size": "2.65MB",
+      "version": "V1.0"
+    },
+    "image": "/images/posts/post-1787190935764-0-1787190937978.jpeg",
+    "views": 0,
+    "createdAt": "2026-08-20T01:55:39.992Z"
+  },
+  {
     "id": "post-1786681918788",
     "category": "repair-articles",
     "title": "BIOS Memory SPD Removal Tool 1.6 | Laptop Onboard RAM Disable Utility (Free)",
