@@ -91,7 +91,8 @@ export default function PostDetail({ params }) {
 
   // CTA Links
   const rawPhone = (settings.phone || '').replace(/[+\s-]/g, '');
-  const waText = encodeURIComponent(`Hi ${settings.siteName}! I am interested in purchasing "${post.title}". Is it currently available?`);
+  const productCodeStr = post.productCode ? ` (Product Code: ${post.productCode})` : '';
+  const waText = encodeURIComponent(`Hi ${settings.siteName}! I am interested in purchasing "${post.title}"${productCodeStr}. Is it currently available?`);
   const waLink = `https://wa.me/${rawPhone}?text=${waText}`;
   const hasDownload = post.downloadLink && post.downloadLink !== '#';
 
@@ -175,6 +176,12 @@ export default function PostDetail({ params }) {
                   </h3>
                   
                   <div id="detail-specs-container" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', borderBottom: '1px solid hsl(var(--border-color))', paddingBottom: '20px' }}>
+                    {post.productCode && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
+                        <span style={{ color: 'hsl(var(--text-muted))' }}>Product Code</span>
+                        <span style={{ fontWeight: 700, color: 'hsl(var(--primary))' }}>{post.productCode}</span>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
                       <span style={{ color: 'hsl(var(--text-muted))' }}>Warranty</span>
                       <span style={{ fontWeight: 600 }}>{post.metadata?.warranty || "N/A"}</span>

@@ -65,6 +65,9 @@ export default function AdminPortal() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [productCode, setProductCode] = useState('');
+  const [priceAmount, setPriceAmount] = useState('');
+  const [priceCurrency, setPriceCurrency] = useState('LKR');
   const [sourceLink, setSourceLink] = useState('');
   const [downloadLink, setDownloadLink] = useState('');
   
@@ -84,6 +87,14 @@ export default function AdminPortal() {
   const [metaVersion, setMetaVersion] = useState('V1.0');
 
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  // Auto-generate product code for Store category
+  useEffect(() => {
+    if (category === 'store' && !productCode) {
+      const generated = "ISP-" + Math.floor(100000 + Math.random() * 900000);
+      setProductCode(generated);
+    }
+  }, [category, productCode]);
 
   // Helper to generate current preview object for modal
   const getPreviewPost = () => {
@@ -110,7 +121,8 @@ export default function AdminPortal() {
       image: coverImage,
       link: sourceLink,
       downloadLink,
-      price: category === 'store' ? price : '',
+      price: category === 'store' ? (priceAmount ? `${priceCurrency} ${priceAmount}` : '') : '',
+      productCode: category === 'store' ? productCode : '',
       metadata
     };
   };
@@ -244,6 +256,9 @@ export default function AdminPortal() {
     setTitle('');
     setDescription('');
     setPrice('');
+    setProductCode('');
+    setPriceAmount('');
+    setPriceCurrency('LKR');
     setSourceLink('');
     setDownloadLink('');
     setImageSlots(['', '', '', '']);
@@ -336,6 +351,21 @@ export default function AdminPortal() {
     setTitle(post.title);
     setDescription(post.description);
     setPrice(post.price || '');
+
+    // Parse price into Currency and Amount
+    const rawPrice = post.price || '';
+    if (rawPrice.startsWith('LKR')) {
+      setPriceCurrency('LKR');
+      setPriceAmount(rawPrice.replace('LKR', '').trim());
+    } else if (rawPrice.startsWith('$')) {
+      setPriceCurrency('$');
+      setPriceAmount(rawPrice.replace('$', '').trim());
+    } else {
+      setPriceCurrency('LKR');
+      setPriceAmount(rawPrice);
+    }
+
+    setProductCode(post.productCode || '');
     setSourceLink(post.link || '');
     setDownloadLink(post.downloadLink || '');
     
@@ -398,7 +428,8 @@ export default function AdminPortal() {
       images: imageSlots,
       link: sourceLink,
       downloadLink,
-      price: category === 'store' ? price : '',
+      price: category === 'store' ? (priceAmount ? `${priceCurrency} ${priceAmount}` : '') : '',
+      productCode: category === 'store' ? productCode : '',
       metadata
     };
 
@@ -407,7 +438,7 @@ export default function AdminPortal() {
     }
 
     try {
-      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || '';
       
       const response = await fetch('/api/admin/posts', {
         method: 'POST',
@@ -451,7 +482,7 @@ export default function AdminPortal() {
     if (window.showToast) window.showToast('Deleting resource from GitHub...', 'info');
 
     try {
-      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || '';
 
       const response = await fetch(`/api/admin/posts?id=${id}`, {
         method: 'DELETE',
@@ -489,7 +520,7 @@ export default function AdminPortal() {
     if (window.showToast) window.showToast('Syncing configurations with GitHub...', 'info');
 
     try {
-      const securePasscode = sessionStorage.getItem('adminPasscode') || 'admin';
+      const securePasscode = sessionStorage.getItem('adminPasscode') || '';
 
       const response = await fetch('/api/admin/settings', {
         method: 'POST',
@@ -763,19 +794,42 @@ export default function AdminPortal() {
                   ></textarea>
                 </div>
 
-                {/* Dynamic Price input for Store */}
+                {/* Dynamic Price and Product Code for Store */}
                 {category === 'store' && (
-                  <div className="form-group price-field-group">
-                    <label htmlFor="form-price">Price Tag</label>
-                    <input 
-                      type="text" 
-                      id="form-price" 
-                      className="form-control" 
-                      placeholder="e.g. $15.00 or LKR 4,500" 
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      required
-                    />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '15px', marginBottom: '15px' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label>Product Code (Auto-Generated)</label>
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        style={{ background: 'hsl(var(--bg-card) / 0.8)', color: 'hsl(var(--text-muted))', fontWeight: 700 }}
+                        value={productCode}
+                        readOnly
+                      />
+                    </div>
+                    
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label>Price</label>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <select 
+                          className="form-control" 
+                          style={{ width: '90px', fontWeight: 700 }}
+                          value={priceCurrency} 
+                          onChange={(e) => setPriceCurrency(e.target.value)}
+                        >
+                          <option value="LKR">LKR</option>
+                          <option value="$">$</option>
+                        </select>
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          placeholder="e.g. 4,500 or 15.00" 
+                          value={priceAmount}
+                          onChange={(e) => setPriceAmount(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
 

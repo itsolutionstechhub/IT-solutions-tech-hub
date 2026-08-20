@@ -81,7 +81,8 @@ export default function PostCard({ post }) {
 
   // WhatsApp Order Link Configuration
   const rawPhone = (settings.phone || '').replace(/[+\s-]/g, '');
-  const waText = encodeURIComponent(`Hi ${settings.siteName}! I am interested in purchasing "${post.title}". Is it currently available?`);
+  const productCodeStr = post.productCode ? ` (Product Code: ${post.productCode})` : '';
+  const waText = encodeURIComponent(`Hi ${settings.siteName}! I am interested in purchasing "${post.title}"${productCodeStr}. Is it currently available?`);
   const waLink = `https://wa.me/${rawPhone}?text=${waText}`;
 
   // Download Link Configuration
@@ -182,16 +183,20 @@ export default function PostCard({ post }) {
             {isStore && post.metadata && (
               <div className="card-spec-grid">
                 <div className="spec-item">
+                  <div className="spec-label">Code</div>
+                  <div className="spec-value" style={{ fontWeight: 700, color: 'hsl(var(--primary))' }}>{post.productCode || "N/A"}</div>
+                </div>
+                <div className="spec-item">
+                  <div className="spec-label">Availability</div>
+                  <div className="spec-value">{post.metadata.stock || "In Stock"}</div>
+                </div>
+                <div className="spec-item">
                   <div className="spec-label">Warranty</div>
                   <div className="spec-value">{post.metadata.warranty || "N/A"}</div>
                 </div>
                 <div className="spec-item">
                   <div className="spec-label">Condition</div>
                   <div className="spec-value">{post.metadata.condition || "Brand New"}</div>
-                </div>
-                <div className="spec-item" style={{ gridColumn: 'span 2' }}>
-                  <div className="spec-label">Availability</div>
-                  <div className="spec-value">{post.metadata.stock || "In Stock"}</div>
                 </div>
               </div>
             )}
