@@ -87,6 +87,13 @@ export default function PostCard({ post }) {
 
   // Download Link Configuration
   const hasDownload = post.downloadLink && post.downloadLink !== '#';
+  
+  const handleDownloadClick = () => {
+    incrementDownloadCount(post.id);
+    if (typeof window !== 'undefined') {
+      window.open('https://youtu.be/8o5u3e7F16c', '_blank');
+    }
+  };
 
   const slug = generateSlug(post.title);
   const detailLink = `/posts/${post.id}/${slug}`;
@@ -221,7 +228,7 @@ export default function PostCard({ post }) {
                   <a 
                     href={post.downloadLink} 
                     className="btn btn-primary" 
-                    onClick={() => incrementDownloadCount(post.id)}
+                    onClick={handleDownloadClick}
                     download
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download
@@ -231,7 +238,7 @@ export default function PostCard({ post }) {
                     type="button" 
                     className="btn btn-primary" 
                     onClick={() => {
-                      incrementDownloadCount(post.id);
+                      handleDownloadClick();
                       if (window.showToast) {
                         window.showToast('Downloading file has started... (Mock link)', 'success');
                       }

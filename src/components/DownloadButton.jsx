@@ -8,6 +8,9 @@ export default function DownloadButton({ postId, downloadLink }) {
 
   const handleClick = () => {
     incrementDownloadCount(postId);
+    if (typeof window !== 'undefined') {
+      window.open('https://youtu.be/8o5u3e7F16c', '_blank');
+    }
     if (!hasDownload && window.showToast) {
       window.showToast('Downloading file has started... (Mock link)', 'success');
     }
