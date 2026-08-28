@@ -1,23 +1,5 @@
 [
   {
-    "id": "post-1787893516737",
-    "category": "tech-news",
-    "title": "aaa",
-    "description": "aaa",
-    "showSpecs": false,
-    "images": [
-      "/images/posts/default.png"
-    ],
-    "link": "",
-    "downloadLink": "",
-    "price": "",
-    "productCode": "",
-    "metadata": {},
-    "image": "/images/posts/default.png",
-    "views": 0,
-    "createdAt": "2026-08-28T05:05:21.618Z"
-  },
-  {
     "id": "post-1787190935764",
     "category": "repair-articles",
     "title": "Epson L130 Resetter Free Download | Epson Adjustment Program (Waste Ink Pad Reset)",
