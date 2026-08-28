@@ -1,5 +1,27 @@
 [
   {
+    "id": "post-1787925586518",
+    "category": "repair-articles",
+    "title": "Canon Service Tool v3400 Free : Fix Error 5B00 & Reset Waste Ink Counter",
+    "description": "Is your Canon printer locked with a flashing orange light showing **Error Code 5B00** or **1700**? Canon Pixma printers (like G2000, G3000, iP2770, MP287) automatically halt printing once the waste ink pads reach their digital capacity limit.\n\nInstead of paying for expensive repair center services, you can easily unlock and reset your printer at home using the **Canon Service Tool v3400 Resetter Software**.\n\nThis official Canon adjustment program allows Level-3 technicians and printer owners to reset waste ink counters to 0%, clear memory locks, and run deep printhead diagnostic cleaning.\n\n---\n\n### Key Features of Canon Service Tool v3400:\n\n* **Fix Error 5B00 & 1700:** Instantly bypass the waste ink absorber pad counter lock.\n* **Full EEPROM Reset:** Restore printer motherboard settings to factory default.\n* **Deep Printhead Cleaning:** Flush ink channels to fix missing print lines or blank pages.\n* **Windows Support:** Runs smoothly on Windows 7, 8, 10, and Windows 11 (32-bit & 64-bit).\n\n---\n\n### Supported Canon Printer Models:\n\n* **Canon Pixma G Series:** G1000, G2000, G3000, G1900, G2900, G3900\n* **Canon Pixma IP Series:** iP2770, iP2700, iP3600, iP4600, iP4700, iP4870, iP4970\n* **Canon Pixma MP Series:** MP230, MP250, MP280, MP287, MP490, MP540, MP550, MP620, MP640\n* **Canon Pixma MX Series:** MX320, MX330, MX340, MX350, MX360, MX410, MX420, MX860, MX870\n* **Canon Pixma IX Series:** iX6500, iX6560, iX6770, iX6870, iX7000\n\n---\n\n### How to Reset Canon Printer via Service Mode:\n\n1. Turn off your printer while keeping it connected to your PC via USB cable.\n2. Press and hold the **Stop/Reset** button.\n3. Press and hold the **Power** button.\n4. Release the Stop/Reset button while continuing to hold Power.\n5. Press the Stop/Reset button **5 times** (the light alternates between green and orange).\n6. Release the Power button. When the green light stays solid, your printer is in **Service Mode**.\n7. Open **Canon Service Tool v3400.exe**.\n8. Under \"Clear Ink Counter\", select \"Main\" under **Absorber** and click **Set**.\n9. Turn off your printer, turn it back on, and start printing normally!\n\nDownload the verified, 100% virus-free **Canon Service Tool v3400 zip file** below to unlock your printer!",
+    "showSpecs": true,
+    "images": [
+      "/images/posts/post-1787925586518-0-1787925592881.jpeg"
+    ],
+    "link": "https://mega.nz/file/cBxmSRRQ#bmjhdbgeycZVLGpRmd0cWB35AnfIAQxLQzmZqVeLd3I",
+    "downloadLink": "",
+    "price": "",
+    "productCode": "",
+    "metadata": {
+      "board": "",
+      "size": "18.9MB",
+      "version": "V3400"
+    },
+    "image": "/images/posts/post-1787925586518-0-1787925592881.jpeg",
+    "views": 0,
+    "createdAt": "2026-08-28T13:59:53.945Z"
+  },
+  {
     "id": "post-1787924683055",
     "category": "store",
     "title": "Canon Pixma iX6770 EEPROM Bin File  Download (Clean Motherboard Dump)",
