@@ -225,8 +225,6 @@ export default function PostCard({ post }) {
                     href={post.downloadLink} 
                     className="btn btn-primary" 
                     onClick={handleDownloadClick}
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download
                   </a>

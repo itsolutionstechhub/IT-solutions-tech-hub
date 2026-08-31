@@ -21,8 +21,6 @@ export default function DownloadButton({ postId, downloadLink }) {
       className="btn btn-primary" 
       style={{ width: '100%', justifyContent: 'center', padding: '12px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
       onClick={handleClick}
-      target="_blank"
-      rel="noopener noreferrer"
     >
       <i className="fa-solid fa-cloud-arrow-down"></i> {hasDownload ? 'Download File Asset' : 'Download Now'}
     </a>
