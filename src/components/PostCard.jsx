@@ -88,16 +88,10 @@ export default function PostCard({ post }) {
   // Download Link Configuration
   const hasDownload = post.downloadLink && post.downloadLink !== '#';
   
-  const handleDownloadClick = (e) => {
-    if (e) e.preventDefault();
+  const handleDownloadClick = () => {
     incrementDownloadCount(post.id);
     if (typeof window !== 'undefined') {
       window.open('https://youtu.be/8o5u3e7F16c', '_blank');
-      if (hasDownload) {
-        window.open(post.downloadLink, '_blank');
-      } else if (window.showToast) {
-        window.showToast('Downloading file has started... (Mock link)', 'success');
-      }
     }
   };
 
@@ -231,6 +225,8 @@ export default function PostCard({ post }) {
                     href={post.downloadLink} 
                     className="btn btn-primary" 
                     onClick={handleDownloadClick}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download
                   </a>
@@ -238,7 +234,12 @@ export default function PostCard({ post }) {
                   <button 
                     type="button" 
                     className="btn btn-primary" 
-                    onClick={handleDownloadClick}
+                    onClick={() => {
+                      handleDownloadClick();
+                      if (window.showToast) {
+                        window.showToast('Downloading file has started... (Mock link)', 'success');
+                      }
+                    }}
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download Now
                   </button>
