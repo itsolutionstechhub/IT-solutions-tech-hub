@@ -91,7 +91,7 @@ export default function PostCard({ post }) {
   const handleDownloadClick = () => {
     incrementDownloadCount(post.id);
     if (typeof window !== 'undefined') {
-      window.open('https://youtu.be/8o5u3e7F16c', '_blank');
+      window.open('https://www.profitableratecpmnetwork.com/muxh1hzatg?key=b93a769eb007ad344df0811587a79a76', '_blank');
     }
   };
 

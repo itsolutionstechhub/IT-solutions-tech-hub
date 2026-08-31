@@ -10,8 +10,8 @@ export default function DownloadButton({ postId, downloadLink }) {
     incrementDownloadCount(postId);
 
     if (typeof window !== 'undefined') {
-      // Open YouTube instruction video in a new tab
-      window.open('https://youtu.be/8o5u3e7F16c', '_blank');
+      // Open Adsterra Direct Link in a new tab
+      window.open('https://www.profitableratecpmnetwork.com/muxh1hzatg?key=b93a769eb007ad344df0811587a79a76', '_blank');
     }
   };
 
