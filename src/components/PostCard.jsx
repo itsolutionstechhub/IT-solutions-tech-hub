@@ -187,23 +187,19 @@ export default function PostCard({ post }) {
                 </div>
               </div>
             )}
-            {isStore && post.metadata && (
+            {isStore && (
               <div className="card-spec-grid">
                 <div className="spec-item">
                   <div className="spec-label">Code</div>
                   <div className="spec-value" style={{ fontWeight: 700, color: 'hsl(var(--primary))' }}>{post.productCode || "N/A"}</div>
                 </div>
                 <div className="spec-item">
+                  <div className="spec-label">Price</div>
+                  <div className="spec-value" style={{ fontWeight: 700, color: 'hsl(var(--accent))' }}>{post.price || "N/A"}</div>
+                </div>
+                <div className="spec-item" style={{ gridColumn: 'span 2' }}>
                   <div className="spec-label">Availability</div>
-                  <div className="spec-value">{post.metadata.stock || "In Stock"}</div>
-                </div>
-                <div className="spec-item">
-                  <div className="spec-label">Warranty</div>
-                  <div className="spec-value">{post.metadata.warranty || "N/A"}</div>
-                </div>
-                <div className="spec-item">
-                  <div className="spec-label">Condition</div>
-                  <div className="spec-value">{post.metadata.condition || "Brand New"}</div>
+                  <div className="spec-value">{post.metadata?.stock || "In Stock"}</div>
                 </div>
               </div>
             )}
@@ -216,7 +212,7 @@ export default function PostCard({ post }) {
             {isStore ? (
               <>
                 <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn btn-shop-buy">
-                  <i className="fa-brands fa-whatsapp"></i> Buy/Inquire
+                  <i className="fa-brands fa-whatsapp"></i> Buy Now
                 </a>
                 <Link href={detailLink} className="btn btn-secondary" style={{ padding: '10px 14px' }}>
                   <i className="fa-solid fa-eye"></i> Details
@@ -229,7 +225,8 @@ export default function PostCard({ post }) {
                     href={post.downloadLink} 
                     className="btn btn-primary" 
                     onClick={handleDownloadClick}
-                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Download
                   </a>

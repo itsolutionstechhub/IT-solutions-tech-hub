@@ -182,14 +182,7 @@ export default function PostDetail({ params }) {
                         <span style={{ fontWeight: 700, color: 'hsl(var(--primary))' }}>{post.productCode}</span>
                       </div>
                     )}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
-                      <span style={{ color: 'hsl(var(--text-muted))' }}>Warranty</span>
-                      <span style={{ fontWeight: 600 }}>{post.metadata?.warranty || "N/A"}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', borderBottom: '1px solid hsl(var(--border-color) / 0.5)', padding: '8px 0' }}>
-                      <span style={{ color: 'hsl(var(--text-muted))' }}>Condition</span>
-                      <span style={{ fontWeight: 600 }}>{post.metadata?.condition || "Brand New"}</span>
-                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', padding: '8px 0' }}>
                       <span style={{ color: 'hsl(var(--text-muted))' }}>Availability</span>
                       <span style={{ fontWeight: 600, color: 'hsl(var(--accent))' }}>{post.metadata?.stock || "In Stock"}</span>
@@ -198,7 +191,7 @@ export default function PostDetail({ params }) {
 
                   <div id="detail-actions-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn btn-shop-buy" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
-                      <i className="fa-brands fa-whatsapp"></i> Order on WhatsApp
+                      <i className="fa-brands fa-whatsapp"></i> Buy Now
                     </a>
                     {post.link && post.link !== '#' && (
                       <a href={post.link} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>

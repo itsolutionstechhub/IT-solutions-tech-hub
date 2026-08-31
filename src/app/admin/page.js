@@ -848,19 +848,9 @@ export default function AdminPortal() {
                 )}
 
                 {category === 'store' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label>Warranty</label>
-                      <input type="text" className="form-control" placeholder="e.g. 1 Year" value={metaWarranty} onChange={(e) => setMetaWarranty(e.target.value)} />
-                    </div>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label>Condition</label>
-                      <input type="text" className="form-control" placeholder="e.g. Brand New" value={metaCondition} onChange={(e) => setMetaCondition(e.target.value)} />
-                    </div>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label>Availability</label>
-                      <input type="text" className="form-control" placeholder="e.g. In Stock" value={metaStock} onChange={(e) => setMetaStock(e.target.value)} />
-                    </div>
+                  <div className="form-group" style={{ marginBottom: '15px' }}>
+                    <label>Availability</label>
+                    <input type="text" className="form-control" placeholder="e.g. In Stock" value={metaStock} onChange={(e) => setMetaStock(e.target.value)} />
                   </div>
                 )}
 
