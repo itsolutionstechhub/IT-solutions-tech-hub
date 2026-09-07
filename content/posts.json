@@ -1,5 +1,27 @@
 [
   {
+    "id": "post-1788769005573",
+    "category": "repair-articles",
+    "title": "Boardviewer Software Free Download - Latest Version ",
+    "description": "Are you a laptop, desktop, or smartphone motherboard repair technician? **Boardviewer** is an indispensable, lightweight software tool designed to open and inspect electronic boardview files.\n\nWhen diagnosing motherboard short circuits, broken trace lines, missing component values, or pinout connections, schematic diagrams alone are not enough. Boardviewer provides an interactive 2D visual layout of the PCB, allowing you to zoom in on components, search net names (like VCC, GND, VIN), and trace circuit paths directly to CPU, GPU, or RAM chips.\n\nDownload the official, portable, 100% free **Boardviewer software latest version** for Windows 7, 8, 10, and Windows 11 (32-bit & 64-bit).\n\n---\n\n### Key Features of Boardviewer Software:\n\n* **Universal File Support:** Opens almost all major schematic boardview file extensions in one single application.\n* **Interactive Component Search:** Instantly locate resistors, capacitors, ICs, diodes, and test points by typing their designation (e.g., PR401, PU101, PL301).\n* **Net Tracing:** Click any pin or pad to highlight all interconnected copper traces across the entire motherboard layers.\n* **Flip & Rotate View:** Smoothly rotate 90/180 degrees and flip between the Top and Bottom sides of the PCB.\n* **Lightweight & Portable:** No complicated installation needed. Just extract the zip file and double-click to run!\n\n---\n\n### Supported Boardview File Formats:\n\nBoardviewer supports a wide variety of schematic software formats, including:\n\n* **.BRD** (Allegro, Eagle, Boardview)\n* **.FZ** (ASUS PCB Boardview)\n* **.CAD** (Fabmaster / Test Research)\n* **.BDV** (Compal / Quanta Boardview)\n* **.TVW** (Pegatron / Foxconn Boardview)\n* **.CST / .CST2** (Dell / HP Boardview)\n* **.ASC** (GenRAD Boardview)\n* **.GR** (GigaByte Boardview)\n\n---\n\n### How to Use Boardviewer Tool (Step-by-Step):\n\n1. Download the **Boardviewer latest version zip file** below.\n2. Extract the ZIP package to your desktop or USB drive.\n3. Open the folder and double-click **Boardviewer.exe** (No installation required).\n4. Click on **File -> Open** (or press Ctrl + O).\n5. Select your motherboard boardview file (`.fz`, `.cad`, `.brd`, etc.) and click **Open**.\n6. Use your mouse scroll wheel to zoom into IC pins, right-click to flip sides, and use the search bar to locate shorted components instantly!\n\nDownload the clean, 100% working **Boardviewer software zip file** below and accelerate your motherboard repair process!",
+    "showSpecs": true,
+    "images": [
+      "/images/posts/post-1788769005573-0-1788769007743.jpeg"
+    ],
+    "link": "",
+    "downloadLink": "https://drive.google.com/file/d/1aEqdKcEw2QLX0wIsZBVC01uyqZp1N1JS/view?usp=sharing",
+    "price": "",
+    "productCode": "",
+    "metadata": {
+      "board": "",
+      "size": "2.44MB",
+      "version": "V2.0.1.8"
+    },
+    "image": "/images/posts/post-1788769005573-0-1788769007743.jpeg",
+    "views": 0,
+    "createdAt": "2026-09-07T08:16:48.883Z"
+  },
+  {
     "id": "post-1788768561435",
     "category": "repair-articles",
     "title": "RT809F Software Download Free (Latest Full Setup & Driver)",
