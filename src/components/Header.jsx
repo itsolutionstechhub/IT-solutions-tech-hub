@@ -9,6 +9,20 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -73,7 +87,16 @@ export default function Header() {
           )}
         </nav>
 
-        <div className="nav-actions">
+        <div className="nav-actions" style={{ display: 'flex', alignItems: 'center' }}>
+          <button 
+            type="button" 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme} 
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            aria-label="Toggle Theme"
+          >
+            <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+          </button>
           <div className={`hamburger ${menuOpen ? 'open' : ''}`} id="hamburger-btn" onClick={toggleMenu}>
             <span></span>
             <span></span>

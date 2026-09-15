@@ -37,6 +37,67 @@
   --shadow-glow: 0 0 20px hsla(var(--primary), 0.25);
 }
 
+/* --- LIGHT MODE THEME OVERRIDES --- */
+[data-theme="light"] {
+  --bg-dark: 210 40% 98%;        /* #f8fafc Clean Light Slate */
+  --bg-card: 0 0% 100%;          /* #ffffff Pure White Card */
+  --bg-nav: 0 0% 100% / 0.85;    /* Glassmorphism White navbar */
+  --border-color: 214 32% 90%;   /* Soft Slate Border */
+
+  --primary: 199 89% 48%;        /* #0284c7 Electric Blue/Teal */
+  --primary-glow: 199 89% 48% / 0.2;
+  --secondary: 262 83% 58%;      /* #8b5cf6 Glowing Violet */
+  --secondary-glow: 262 83% 58% / 0.2;
+
+  --text-primary: 222 47% 11%;   /* #0f172a Deep Dark Slate Text */
+  --text-secondary: 215 25% 27%; /* #334155 Charcoal Text */
+  --text-muted: 215 16% 47%;     /* #64748b Muted Grey Text */
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .hero-section {
+  background: radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.08), transparent 70%);
+}
+
+[data-theme="light"] .content-rich-box {
+  background-color: #ffffff;
+  border-color: hsl(214 32% 88%);
+}
+
+[data-theme="light"] pre, [data-theme="light"] code {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .admin-form-panel {
+  background-color: #ffffff;
+}
+
+.theme-toggle-btn {
+  background: hsl(var(--bg-card));
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--border-color));
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+  margin-right: 8px;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.08);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 12px hsla(var(--primary), 0.3);
+}
+
 /* --- RESET & BASE STYLES --- */
 * {
   margin: 0;

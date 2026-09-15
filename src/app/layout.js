@@ -23,6 +23,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Anti-Flicker Theme Script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+              })();
+            `,
+          }}
+        />
+
         {/* Pinterest Domain Verification */}
         <meta name="p:domain_verify" content="243fafa6d83f2880069abe513e04eeef"/>
 
