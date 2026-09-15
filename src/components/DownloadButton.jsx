@@ -3,15 +3,16 @@
 import React from 'react';
 import { incrementDownloadCount } from '../lib/dbHelpers';
 
-export default function DownloadButton({ postId, downloadLink }) {
+export default function DownloadButton({ postId, downloadLink, link }) {
   const hasDownload = downloadLink && downloadLink !== '#';
 
   const handleClick = () => {
     incrementDownloadCount(postId);
 
     if (typeof window !== 'undefined') {
-      // Open Adsterra Direct Link in a new tab
-      window.open('https://www.profitableratecpmnetwork.com/muxh1hzatg?key=b93a769eb007ad344df0811587a79a76', '_blank');
+      const adsterraUrl = 'https://www.profitableratecpmnetwork.com/muxh1hzatg?key=b93a769eb007ad344df0811587a79a76';
+      const targetUrl = (link && link !== '#' && link.trim() !== '') ? link : adsterraUrl;
+      window.open(targetUrl, '_blank');
     }
   };
 

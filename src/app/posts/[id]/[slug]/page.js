@@ -218,7 +218,7 @@ export default function PostDetail({ params }) {
                     </div>
 
                   <div id="detail-actions-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <DownloadButton postId={post.id} downloadLink={post.downloadLink} />
+                    <DownloadButton postId={post.id} downloadLink={post.downloadLink} link={post.link} />
                     {post.link && post.link !== '#' && (
                       <a href={post.link} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
                         <i className="fa-solid fa-arrow-up-right-from-square"></i> Visit Official Source
