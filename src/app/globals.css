@@ -4,11 +4,11 @@
 :root {
   --font-family: 'Outfit', sans-serif;
   
-  /* HSL Colors - Pure OLED Black Theme */
-  --bg-dark: 0 0% 0%;          /* #000000 Pure Pitch Black */
-  --bg-card: 0 0% 7%;          /* #121212 Deep Obsidian Card */
-  --bg-nav: 0 0% 0% / 0.85;    /* #000000 Pure Black Nav */
-  --border-color: 0 0% 18%;    /* #2e2e2e Subtle Border */
+  /* HSL Colors - Sleek Cyber Dark Theme */
+  --bg-dark: 222 47% 11%;      /* #0b0f19 Deep Space */
+  --bg-card: 223 47% 16%;      /* #141c2f Card Slate */
+  --bg-nav: 222 47% 11% / 0.8;
+  --border-color: 217 33% 22%; /* Soft Slate Border */
   
   --primary: 191 97% 47%;      /* #0ea5e9 Cyber Teal / Cyan */
   --primary-glow: 191 97% 47% / 0.35;
